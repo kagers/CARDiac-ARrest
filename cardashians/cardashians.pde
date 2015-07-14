@@ -6,6 +6,7 @@ import processing.video.*;
 */
 
 //:^)
+//:))))
 
 OpenCV opencv;
 PImage img,gray,blur,thresh; //to store each image to display after each opencv edit
