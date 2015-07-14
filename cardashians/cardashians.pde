@@ -1,4 +1,6 @@
 import gab.opencv.*;
+import org.opencv.core.*;
+import org.opencv.imgproc.*;
 import processing.video.*;
 /*
   Right now I'm just messing around with opencv 
@@ -35,15 +37,17 @@ void draw(){
  if(cam.available()){
     cam.read();
   }
- //image(cam,0,0);
+ image(cam,0,0);
   opencv = new OpenCV(this, cam);
   opencv.adaptiveThreshold(591,-50);
   thresh = opencv.getSnapshot();
   image(thresh,0,0);
   opencv.loadImage(thresh);
   
-  ArrayList<Contour> cards =  biggestC(opencv.findContours(),4);
+  ArrayList<Contour> cards =  biggestC(opencv.findContours(),1);
   outlineRects(cards);
+  Contour testContour=cards.get(0);
+  PImage final=createImage(250,350, ARGB);
   
 
 }
@@ -53,7 +57,7 @@ void draw(){
   based on area and stores in arraylist
 */
 ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
-  Contour max = conts.get(0);
+    Contour max = conts.get(0);
   ArrayList<Contour> biggest = new ArrayList<Contour>();
   int n=0;
   for(int i=0; i <numCards;i++){
@@ -86,3 +90,39 @@ void outlineRects(ArrayList<Contour> conts){
     endShape(CLOSE);
   }  
 }
+
+Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
+  //sets up the temporary location for the warped image
+  Point[] canons=new Point[4];
+  canons[0]=new Point(w,0);
+  
+  canons[1]=new Point(0,0);
+  canons[2]=new Point(0,h);
+  canons[3]=new Point(w,h);
+  
+  //makes matrix of those points
+  MatOfPoint2f canonMarker=new MatOfPoint2f();
+  canonMarker.fromArray(canons);
+  
+  //makes array of the actual coordinates of the original image
+  Point[] reals=new Point[4];
+  for (int i=0;i<4;i++) {
+    reals[i]=new Point(inputPoints.get(i).x, inputPoints.get(i).y);
+  }
+  MatOfPoint2f realMarker=new MatOfPoint2f(reals);
+  
+  //calculates diff in perspective b/w straight temp image and original skewed image
+  return Imgproc.getPerspectiveTransform(realMarker,canonMarker);
+}
+
+Mat warpPerspective(ArrayList<PVector> inputPoints, int w, int h) {
+  //gets the perspective transform diff b/w original and straight temp
+  Mat transform=getPerspectiveTransformation(inputPoints,w,h);
+  
+  //makes location for final processed image
+  Mat endMarker=new Mat(w,h,CvType.CV_8UC1);
+  //applies perspective difference to create final image 
+  Imgproc.warpPerspective(opencv.getColor(), endMarker, transform, new Size(w,h));
+  return endMarker;
+}
+  
