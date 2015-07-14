@@ -5,6 +5,8 @@ import processing.video.*;
   and trying to use the methods from the article online
 */
 
+//:^)
+
 OpenCV opencv;
 PImage img,gray,blur,thresh; //to store each image to display after each opencv edit
 ArrayList<Contour> cards; //stores contours of all four cards
