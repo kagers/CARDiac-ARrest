@@ -2,18 +2,12 @@ import gab.opencv.*;
 import org.opencv.core.*;
 import org.opencv.imgproc.*;
 import processing.video.*;
-/*
-  Right now I'm just messing around with opencv 
-  and trying to use the methods from the article online
-*/
-
-//:^)
-//:))))
 
 OpenCV opencv;
 PImage img,gray,blur,thresh; //to store each image to display after each opencv edit
 ArrayList<Contour> cards; //stores contours of all four cards
 Capture cam;
+int ch,cw;
 
 void setup(){
   //img = loadImage("test.png"); //test is the pic from the article
@@ -22,34 +16,27 @@ void setup(){
   size(width,height);
   cam = new Capture(this);
   cam.start();
-  //image(img,0,0);
-  //opencv = new OpenCV(this, img);
-  // opencv.loadImage(gray); //by deafualt opencv images are grey
-  //opencv.gray(); //these two methods seem kinda useless
-  // opencv.blur(2); //also not really sure if blur is necessary either
-  // blur = opencv.getSnapshot();
-  // opencv.loadImage(blur);
-  // opencv.threshold(80); //another threshold method, works for colors
-  
+  cw=200;
+  ch=cw+100;
 }
 
 void draw(){
- if(cam.available()){
+  if(cam.available()){
     cam.read();
-  }
- image(cam,0,0);
-  opencv = new OpenCV(this, cam);
-  opencv.adaptiveThreshold(591,-50);
-  thresh = opencv.getSnapshot();
-  image(thresh,0,0);
-  opencv.loadImage(thresh);
+    opencv = new OpenCV(this, cam);
+    opencv.adaptiveThreshold(591,-50);
+    thresh = opencv.getSnapshot();
+    image(thresh,0,0);
+    opencv.loadImage(thresh);
   
-  ArrayList<Contour> cards =  biggestC(opencv.findContours(),1);
-  outlineRects(cards);
-  Contour testContour=cards.get(0);
-  PImage fin=createImage(250,350, ARGB);
-  opencv.toPImage(warpPerspective(testContour.getPoints(),250,350), fin);
-  fin.save("test1.jpg");
+    ArrayList<Contour> cards =  biggestC(opencv.findContours(),1);
+    outlineRects(cards);
+    Contour testContour=cards.get(0).getPolygonApproximation();
+    PImage fin=createImage(cw,ch, ARGB);
+    opencv.toPImage(warpPerspective(testContour.getPoints(),cw,ch), fin);
+    //fin.save("test1.jpg");
+    image(fin, cw+400,ch+400);
+  }
 }
 
 /*
@@ -57,7 +44,7 @@ void draw(){
   based on area and stores in arraylist
 */
 ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
-    Contour max = conts.get(0);
+  Contour max = conts.get(0);   // 
   ArrayList<Contour> biggest = new ArrayList<Contour>();
   int n=0;
   for(int i=0; i <numCards;i++){
@@ -66,7 +53,7 @@ ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
       if(c.area()>max.area()){
         max = c;
         n=j;
-        }
+      }
     }
     biggest.add(conts.remove(n));
     max = conts.get(0);
@@ -110,7 +97,7 @@ Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
     reals[i]=new Point(inputPoints.get(i).x, inputPoints.get(i).y);
   }
   MatOfPoint2f realMarker=new MatOfPoint2f(reals);
-  
+
   //calculates diff in perspective b/w straight temp image and original skewed image
   return Imgproc.getPerspectiveTransform(realMarker,canonMarker);
 }
