@@ -24,7 +24,7 @@ void draw(){
   if(cam.available()){
     cam.read();
     opencv = new OpenCV(this, cam);
-    opencv.adaptiveThreshold(591,-50);
+    opencv.adaptiveThreshold(591,-45);
     thresh = opencv.getSnapshot();
     image(thresh,0,0);
     opencv.loadImage(thresh);
@@ -32,10 +32,14 @@ void draw(){
     ArrayList<Contour> cards =  biggestC(opencv.findContours(),1);
     outlineRects(cards);
     Contour testContour=cards.get(0).getPolygonApproximation();
+    //Contour testContour2=cards.get(1).getPolygonApproximation();
     PImage fin=createImage(cw,ch, ARGB);
+    //PImage fin2=createImage(cw,ch,ARGB);
     opencv.toPImage(warpPerspective(testContour.getPoints(),cw,ch), fin);
+    //opencv.toPImage(warpPerspective(testContour2.getPoints(),cw,ch), fin2);
     //fin.save("test1.jpg");
     image(fin, cw+400,ch+400);
+    //image(fin2, cw+200,ch+400);
   }
 }
 
@@ -81,11 +85,14 @@ void outlineRects(ArrayList<Contour> conts){
 Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
   //sets up the temporary location for the warped image
   Point[] canons=new Point[4];
-  canons[0]=new Point(w,0);
-  
-  canons[1]=new Point(0,0);
-  canons[2]=new Point(0,h);
-  canons[3]=new Point(w,h);
+  canons[0]=new Point(w,h);
+  canons[1]=new Point(w,0);
+  canons[2]=new Point(0,0);
+  canons[3]=new Point(0,h);
+  // canons[0] = new Point(w, 0);
+  // canons[1] = new Point(0, 0);
+  // canons[2] = new Point(0, h);
+  // canons[3] = new Point(w, h);
   
   //makes matrix of those points
   MatOfPoint2f canonMarker=new MatOfPoint2f();
