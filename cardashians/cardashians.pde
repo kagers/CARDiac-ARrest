@@ -47,9 +47,9 @@ void draw(){
   ArrayList<Contour> cards =  biggestC(opencv.findContours(),1);
   outlineRects(cards);
   Contour testContour=cards.get(0);
-  PImage final=createImage(250,350, ARGB);
-  
-
+  PImage fin=createImage(250,350, ARGB);
+  opencv.toPImage(warpPerspective(testContour.getPoints(),250,350), fin);
+  fin.save("test1.jpg");
 }
 
 /*
