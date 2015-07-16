@@ -2,37 +2,33 @@
 import gab.opencv.*;
 import org.opencv.core.*;
 import org.opencv.imgproc.*;
-import processing.video.*;
 
 class imgProcess{
 
   OpenCV opencv;
-  PImage thresh;
+  PImage threshed; //image after adaptive threshold
   ArrayList<Contour> cards; //stores contours of all four cards
-
-
-  PImage img;
   int ch, cw; //unwarped card demensions
-  int threshold;
-  int numCs;
+  int threshold; 
+  int numCs; //number of cards
 
   imgProcess(OpenCV op, int numCards, int th){
-    //img = c;
     opencv = op;
     threshold = th;
     cw = 210;
     ch = 310;
     numCs = numCards;
-  }
-  /*
-  imgProcess(OpenCV op, int numCs){
-    this(op, numCs, -50);
+    thresh(th);
   }
   
-  imgProcess(OpenCV op, c){
+  imgProcess(OpenCV op, int numCardss){
+    this(op, numCards, -50);
+  }
+  
+  imgProcess(OpenCV op){
     this(op, 2, -50);
   }
-  */
+  
   
   /*
     sets dimensions for unwarped card
@@ -46,7 +42,7 @@ class imgProcess{
   //runs adaptive threshold
   void thresh(int th){
     opencv.adaptiveThreshold(591,th);
-    PImage threshed = opencv.getSnapshot();    
+    threshed = opencv.getSnapshot();    
     opencv.loadImage(threshed);
   }
 
@@ -54,7 +50,6 @@ class imgProcess{
     unwarps numCards cards in img
   */
   ArrayList<PImage> processCards(int numCards){
-    thresh(threshold);
     ArrayList<Contour> cards =  biggestC(opencv.findContours(),numCards);
     return unwarpCards(cards);
   }
@@ -69,7 +64,7 @@ class imgProcess{
   }
 
   /*
-    unwarps contours
+    unwarps a list of contours
   */
   ArrayList<PImage> unwarpCards(ArrayList<Contour> contours){
     ArrayList<PImage> p = new ArrayList<PImage>();
@@ -78,7 +73,7 @@ class imgProcess{
     }
     return p;
   }
-      
+  
                    
   /*
     finds numCard biggest contours in conts
@@ -96,17 +91,22 @@ class imgProcess{
           n=j;
         }
       }
+     
       biggest.add(conts.remove(n));
-      max = conts.get(0);
+      if(conts.size() > 0){
+        max = conts.get(0);
+      } else {
+        break;
+      }
     }
     return biggest; 
   }
 
   /*
     outlines the cards into a red rectangle
+    doesn't work because image is drawn on wrong image
   */
   void outlineRects(ArrayList<Contour> conts){
-   
     noFill();
     for(Contour c : conts){
       beginShape();
@@ -122,6 +122,8 @@ class imgProcess{
     ArrayList<Contour> cards =  biggestC(opencv.findContours(),numCs);
     outlineRects(cards);
   }
+
+  /* ----------------------Warp Persepective stuff-----------------------------*/
 
   Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
     //sets up the temporary location for the warped image
