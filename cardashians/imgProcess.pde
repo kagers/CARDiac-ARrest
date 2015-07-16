@@ -5,12 +5,16 @@ import org.opencv.imgproc.*;
 
 class imgProcess{
 
+  /*--------------------------Variables-----------------------------------*/
   OpenCV opencv;
   PImage threshed; //image after adaptive threshold
   ArrayList<Contour> cards; //stores contours of all four cards
   int ch, cw; //unwarped card demensions
   int threshold; 
   int numCs; //number of cards
+
+
+  /*-------------------------Constructors--------------------------------*/
 
   imgProcess(OpenCV op, int numCards, int th){
     opencv = op;
@@ -29,6 +33,7 @@ class imgProcess{
     this(op, 2, -50);
   }
   
+  /*-------------------------------Methods--------------------------------*/
   
   /*
     sets dimensions for unwarped card
@@ -39,7 +44,9 @@ class imgProcess{
   }
   
   
-  //runs adaptive threshold
+  /*
+    runs adaptive threshold
+  */
   void thresh(int th){
     opencv.adaptiveThreshold(591,th);
     threshed = opencv.getSnapshot();    
@@ -54,26 +61,11 @@ class imgProcess{
     return unwarpCards(cards);
   }
 
-  /*
-    unwarps a single contour
-  */
-  PImage unwarpC(Contour c){    
-    PImage newImg =createImage(ch,cw, ARGB);
-    opencv.toPImage(warpPerspective(c.getPolygonApproximation().getPoints(),ch,cw), newImg);
-    return newImg;
-  }
-
-  /*
-    unwarps a list of contours
-  */
-  ArrayList<PImage> unwarpCards(ArrayList<Contour> contours){
-    ArrayList<PImage> p = new ArrayList<PImage>();
-    for(Contour c: contours){
-      p.add(unwarpC(c));
-    }
-    return p;
+  ArrayList<PImage> processCards(){
+    processCards(numCs);
   }
   
+  /*-----------------------------Contour Methods----------------------------*/
                    
   /*
     finds numCard biggest contours in conts
@@ -104,7 +96,7 @@ class imgProcess{
 
   /*
     outlines the cards into a red rectangle
-    doesn't work because image is drawn on wrong image
+    doesn't work because rect is drawn on wrong image
   */
   void outlineRects(ArrayList<Contour> conts){
     noFill();
@@ -123,7 +115,27 @@ class imgProcess{
     outlineRects(cards);
   }
 
-  /* ----------------------Warp Persepective stuff-----------------------------*/
+  /* ----------------------Warp Persepective Methods-----------------------------*/
+
+  /*
+    unwarps a single contour
+  */
+  PImage unwarpC(Contour c){    
+    PImage newImg =createImage(ch,cw, ARGB);
+    opencv.toPImage(warpPerspective(c.getPolygonApproximation().getPoints(),ch,cw), newImg);
+    return newImg;
+  }
+
+  /*
+    unwarps a list of contours
+  */
+  ArrayList<PImage> unwarpCards(ArrayList<Contour> contours){
+    ArrayList<PImage> p = new ArrayList<PImage>();
+    for(Contour c: contours){
+      p.add(unwarpC(c));
+    }
+    return p;
+  }
 
   Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
     //sets up the temporary location for the warped image
