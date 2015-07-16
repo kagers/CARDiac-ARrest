@@ -2,11 +2,14 @@ ArrayList<PImage> pics = new ArrayList<PImage>();
 
 void setup() {
   for (int i=0; i<36; i++) {
-    pics.add(loadImage("../capturer/cards/c"+i+".png"));
+    pics.add(loadImage("../../capturer/cards/c"+i+".png"));
   }
-  PImage a = loadImage("test/c28.png");
+  PImage a = loadImage("test/c27.png");
   size(pics.get(0).width, pics.get(0).height);
-  //println(absDif(a, pics.get(10)));
+  println(absDif(a, pics.get(11),true));
+  println(absDif(a, pics.get(11),!true));
+  println(absDif(a, pics.get(7),true));
+  println(absDif(a, pics.get(7),!true));
   image(minDif(a,pics), 0, 0);
 }
 
@@ -45,19 +48,20 @@ PImage minDif(PImage a, ArrayList<PImage> L) {
   long b;
   for (int i=0; i<L.size (); i++) {
     b = absDif(a, L.get(i), true);
-    //dif = min(b, dif);
     if (b<dif) {
       dif=b;
       ret=i;
+      println(i);
     }
     b = absDif(a, L.get(i), false);
-    //dif = min(b, dif);
     if (b<dif) {
       dif=b;
       ret=i;
+      println(i);
     }
   }
   println(dif);
+  println(ret);
   return L.get(ret);
 }
 

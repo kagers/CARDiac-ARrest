@@ -11,12 +11,12 @@ int ch,cw,threshold;
 PImage fin;
 int n=0;
 ArrayList<PImage> Parray;
-int m=27;
+int m=0;
 
 void setup(){
   //img = loadImage("test.png"); //test is the pic from the article
-  int width = 1500;
-  int height = 1500;
+  int width = 1000;
+  int height = 1000;
   size(width,height);
   cam = new Capture(this);
   cam.start();
@@ -36,7 +36,7 @@ void draw(){
     image(thresh,0,0);
     opencv.loadImage(thresh);
 
-     cards =  biggestC(opencv.findContours(),16);
+     cards =  biggestC(opencv.findContours(),5);
      outlineRects(cards);
  
     //PImage fin2=createImage(cw,ch,ARGB);
@@ -50,7 +50,7 @@ void draw(){
         opencv.toPImage(warpPerspective(cards.get(i).getPoints(),cw,ch),Parray.get(i));
     }
      try{
-       image( Parray.get(n), cw+400,ch+400);
+       image( Parray.get(n), 0,0);
      } catch (ArrayIndexOutOfBoundsException e){}
   }
 }
