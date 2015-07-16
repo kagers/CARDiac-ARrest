@@ -1,7 +1,28 @@
-import gab.opencv.*;
-import org.opencv.core.*;
-import org.opencv.imgproc.*;
-import processing.video.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import gab.opencv.*; 
+import org.opencv.core.*; 
+import org.opencv.imgproc.*; 
+import processing.video.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class cardashians extends PApplet {
+
+
+
+
+
 
 OpenCV opencv;
 PImage img,gray,blur,thresh; //to store each image to display after each opencv edit
@@ -11,9 +32,8 @@ int ch,cw,threshold;
 PImage fin;
 int n=0;
 ArrayList<PImage> Parray;
-int m=27;
 
-void setup(){
+public void setup(){
   //img = loadImage("test.png"); //test is the pic from the article
   int width = 1500;
   int height = 1500;
@@ -23,11 +43,11 @@ void setup(){
   cw=210;
   ch=cw+100;
  
-  threshold=-60;
+  threshold=-50;
   Parray = new ArrayList<PImage>();
 }
 
-void draw(){
+public void draw(){
   if(cam.available()){
     cam.read();
     opencv = new OpenCV(this, cam);
@@ -55,13 +75,8 @@ void draw(){
   }
 }
 
-void keyPressed(){
-  if (key==ENTER) {
-     println("enter");
-      Parray.get(n).save("cards/c"+m+".png");
-      m++;
-  }
-  else if(key==CODED){
+public void keyPressed(){
+  if(key==CODED){
     if (keyCode==RIGHT) {
       n++;
     } else if (keyCode==LEFT){
@@ -77,8 +92,9 @@ void keyPressed(){
       threshold++;
     } else if (keyCode == DOWN){
       threshold--;
-    } 
-     
+    } if (keyCode == ENTER){
+      Parray.get(n).save("cards/c"+n+".png");
+    }
     
   }
 }
@@ -87,7 +103,7 @@ void keyPressed(){
   finds numCard biggest contours in conts
   based on area and stores in arraylist
 */
-ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
+public ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
   Contour max = conts.get(0);   // 
   ArrayList<Contour> biggest = new ArrayList<Contour>();
   int n=0;
@@ -110,7 +126,7 @@ ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
   need to find a way to store the rectangular image
   rather than just outline
 */
-void outlineRects(ArrayList<Contour> conts){
+public void outlineRects(ArrayList<Contour> conts){
   noFill();
   for(Contour c : conts){
     beginShape();
@@ -122,7 +138,7 @@ void outlineRects(ArrayList<Contour> conts){
   }  
 }
 
-Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
+public Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
   //sets up the temporary location for the warped image
   Point[] canons=new Point[4];
   canons[0]=new Point(w,h);
@@ -149,7 +165,7 @@ Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
   return Imgproc.getPerspectiveTransform(realMarker,canonMarker);
 }
 
-Mat warpPerspective(ArrayList<PVector> inputPoints, int w, int h) {
+public Mat warpPerspective(ArrayList<PVector> inputPoints, int w, int h) {
   //gets the perspective transform diff b/w original and straight temp
   Mat transform=getPerspectiveTransformation(inputPoints,w,h);
   
@@ -161,3 +177,12 @@ Mat warpPerspective(ArrayList<PVector> inputPoints, int w, int h) {
 }
   
 
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "cardashians" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
+}
