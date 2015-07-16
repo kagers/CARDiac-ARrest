@@ -1,11 +1,11 @@
 ArrayList<PImage> pics = new ArrayList<PImage>();
 
 void setup() {
-  size(500, 500);
   for (int i=0; i<36; i++) {
     pics.add(loadImage("../capturer/cards/c"+i+".png"));
   }
-  println(absDif(pics.get(0), pics.get(1)));
+  size(pics.get(0).width,pics.get(0).height);
+  println(absDif(pics.get(6), pics.get(0)));
   //image(minDif(pics.get(2),pics), 0, 0);
 }
 
@@ -25,6 +25,11 @@ long absDif(PImage a, PImage b) {
   for (int i=0; i<aa.length; i++) {
     ret += cc[i];
   }
+  loadPixels();
+  for (int i=0; i<aa.length; i++) {
+    pixels[i] = color((int)cc[i]);
+  }
+  updatePixels();
   return ret;
   //return 0;
 }
@@ -35,7 +40,7 @@ PImage minDif(PImage a, ArrayList<PImage> L) {
   for (int i=0; i<L.size (); i++) {
     long b = absDif(a, L.get(i));
     //dif = min(b, dif);
-    if (b<dif){
+    if (b<dif) {
       dif=b;
       ret=i;
     }
