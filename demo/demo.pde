@@ -6,29 +6,30 @@ ArrayList<PImage> Parray;
 int n=0;
 OpenCV opencv;
 PImage img;
+PImage cardTest;
 
 void setup(){
   int width = 1000;
   int height = 1000;
   size(width,height);
   cam = new Capture(this);
-  cam.start();
-   
+  cam.start();   
 }
 
 void draw(){
+  delay(1000);
   try {
-    /*if(cam.available()){
+    if(cam.available()){
       cam.read();
-      }*/
-    //opencv = new OpenCV(this,cam);
-    PImage cardTest=loadImage("../test/c28.png");
-    opencv=new OpenCV(this,cardTest);
-    ip = new imgProcess(opencv,1); 
-    //Parray = ip.unwarpCards();
-    //image(ip.threshed,0,0); //depicts image in black'n'white
-    //image(cam,0,0);
-    image(cardTest,0,0);
+      }
+    opencv = new OpenCV(this,cam);
+    //cardTest=loadImage("../pics/c0.png");
+    //opencv=new OpenCV(this,cardTest);
+    ip = new imgProcess(opencv); 
+    Parray = ip.unwarpCards();
+    image(ip.threshed,0,0); //depicts image in black'n'white
+    image(cam,0,0);
+    //image(cardTest,0,0);
     ip.outlineCards();
     try{
       image(Parray.get(n),790,0);
@@ -43,23 +44,19 @@ void keyPressed(){
       n++;
     } else if (keyCode==LEFT){
       n--;
-    }
+    } 
   }
   if (keyCode == ENTER){
-    String s=""+n;
-    println("text");
-    //Parray.get(n).save("../pics/c"+n+".png");
+    int picNum=ip.minDif(Parray.get(n)); 
     textSize(72);
     fill(0);
-    n=22;
-    int suit=n%4;
-    int number=(n/4)+6;
-    println(number);
-    text(numToCard(suit,number),300,800);
+    text(numToCard(picNum),300,800);
   }
 }
 
-String numToCard(int s, int n) {
+String numToCard(int picNum) {
+  int s=picNum%4;
+  int n=(picNum/4)+6;
   String[] suits={"diamonds","clubs","hearts","spades"};
   String[] faces={"jack","queen","king","ace"};
   String suit=suits[s];
@@ -72,4 +69,3 @@ String numToCard(int s, int n) {
   return face+" of "+suit;
 }
     
-
