@@ -3,7 +3,7 @@ import processing.video.*;
 imgProcess ip;
 Capture cam;
 ArrayList<PImage> Parray;
-int n=0;
+int n;
 OpenCV opencv;
 PImage img;
 PImage cardTest;
@@ -11,13 +11,13 @@ PImage cardTest;
 void setup(){
   int width = 1000;
   int height = 1000;
+  n=0;
   size(width,height);
   cam = new Capture(this);
   cam.start();   
 }
 
 void draw(){
-  delay(1000);
   try {
     if(cam.available()){
       cam.read();
@@ -25,9 +25,9 @@ void draw(){
     opencv = new OpenCV(this,cam);
     //cardTest=loadImage("../pics/c0.png");
     //opencv=new OpenCV(this,cardTest);
-    ip = new imgProcess(opencv); 
+    ip = new imgProcess(opencv,8); 
     Parray = ip.unwarpCards();
-    image(ip.threshed,0,0); //depicts image in black'n'white
+    // image(ip.threshed,0,0); //depicts image in black'n'white
     image(cam,0,0);
     //image(cardTest,0,0);
     ip.outlineCards();
@@ -49,8 +49,9 @@ void keyPressed(){
   if (keyCode == ENTER){
     int picNum=ip.minDif(Parray.get(n)); 
     textSize(72);
-    fill(0);
-    text(numToCard(picNum),300,800);
+    fill(255);
+    stroke(0);
+    text(numToCard(picNum),300,750);
   }
 }
 
