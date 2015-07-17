@@ -1,6 +1,0 @@
-class NumCard extends Card {
-  NumCard() {
-    super();
-    animationType="number";
-  }
-}

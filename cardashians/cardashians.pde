@@ -17,8 +17,10 @@ void setup(){
 }
 
 void draw(){
-  if(cam.available()){
-    cam.read();
+  try {
+    if(cam.available()){
+      cam.read();
+    }
     opencv = new OpenCV(this,cam);
     ip = new imgProcess(opencv); 
     Parray = ip.unwarpCards();
@@ -26,11 +28,10 @@ void draw(){
     image(cam,0,0);
     ip.outlineCards();
     try{
-      image(Parray.get(n),0,0);
+      image(Parray.get(n),790,0);
     } catch(IndexOutOfBoundsException e){
     }
-  } 
-
+  } catch (Exception e) {}
 }
 
 void keyPressed(){
@@ -42,7 +43,27 @@ void keyPressed(){
     }
   }
   if (keyCode == ENTER){
-    Parray.get(n).save("../pics/c"+n+".png");
+    String s=""+n;
+    println("text");
+    //Parray.get(n).save("../pics/c"+n+".png");
+    textSize(72);
+    fill(255);
+    text(n,790,1000);
+    int suit=n%4;
+    int number=(n/4)+6;
   }
 }
+
+String numToCard(int s, int n) {
+  String[] suits={"diamonds","clubs","hearts","spades"};
+  String[] faces={"jack","queen","king","ace"};
+  String suit=suits[s];
+  String face;
+  if (n>5) {
+    int t=n%5;
+    face=faces[t];
+  }
+  return face+" of "+suit;
+}
+    
 
