@@ -8,9 +8,8 @@ class imgProcess{
   /*--------------------------Variables-----------------------------------*/
   OpenCV opencv;
   PImage threshed; //image after adaptive threshold
-  ArrayList<Contour> cards; //stores contours of all four cards
+  ArrayList<Contour> cards; //stores contours of all the cards
   int ch, cw; //unwarped card demensions
-  int threshold; 
   int numCs; //number of cards
 
 
@@ -18,14 +17,14 @@ class imgProcess{
 
   imgProcess(OpenCV op, int numCards, int th){
     opencv = op;
-    threshold = th;
-    cw = 210;
-    ch = 310;
+    cw = 310;
+    ch = 210;
     numCs = numCards;
     thresh(th);
+    cards =  biggestC(opencv.findContours(),numCs);
   }
   
-  imgProcess(OpenCV op, int numCardss){
+  imgProcess(OpenCV op, int numCards){
     this(op, numCards, -50);
   }
   
@@ -47,23 +46,12 @@ class imgProcess{
   /*
     runs adaptive threshold
   */
-  void thresh(int th){
-    opencv.adaptiveThreshold(591,th);
+  void thresh(int threshold){
+    opencv.adaptiveThreshold(591,threshold);
     threshed = opencv.getSnapshot();    
     opencv.loadImage(threshed);
   }
 
-  /*
-    unwarps numCards cards in img
-  */
-  ArrayList<PImage> processCards(int numCards){
-    ArrayList<Contour> cards =  biggestC(opencv.findContours(),numCards);
-    return unwarpCards(cards);
-  }
-
-  ArrayList<PImage> processCards(){
-    processCards(numCs);
-  }
   
   /*-----------------------------Contour Methods----------------------------*/
                    
@@ -83,7 +71,6 @@ class imgProcess{
           n=j;
         }
       }
-     
       biggest.add(conts.remove(n));
       if(conts.size() > 0){
         max = conts.get(0);
@@ -95,23 +82,23 @@ class imgProcess{
   }
 
   /*
-    outlines the cards into a red rectangle
-    doesn't work because rect is drawn on wrong image
+    outlines the cards into a green rectangle
+    must be run after image is displayed in main
   */
   void outlineRects(ArrayList<Contour> conts){
     noFill();
     for(Contour c : conts){
       beginShape();
-      stroke(255,0,0);
+      strokeWeight(4);
+      stroke(0,255,0);
       for (PVector point : c.getPolygonApproximation().getPoints()) {
         vertex(point.x, point.y);
       }
       endShape(CLOSE);
     }  
   }
-
+  
   void outlineCards(){
-    ArrayList<Contour> cards =  biggestC(opencv.findContours(),numCs);
     outlineRects(cards);
   }
 
@@ -135,6 +122,10 @@ class imgProcess{
       p.add(unwarpC(c));
     }
     return p;
+  }
+
+  ArrayList<PImage> unwarpCards(){
+    return unwarpCards(cards);
   }
 
   Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
