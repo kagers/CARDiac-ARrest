@@ -6,13 +6,11 @@ class Player {
     cardCount=18;
     myCards=new ArrayList<Card>();
   }
-  void addToDeck(Card c){
-    myCards.add(c);
+  void wonHand(){
     cardCount++;
   }
-  Card withdraw() {
+  void lostHand() {
     cardCount--;
-    return myCards.remove(0);
   }
   boolean isWinner() {
     return cardCount==36;
