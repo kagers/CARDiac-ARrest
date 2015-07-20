@@ -43,25 +43,24 @@ void keyPressed(){
     }
   }
   if (keyCode == ENTER){
-    String s=""+n;
-    println("text");
-    //Parray.get(n).save("../pics/c"+n+".png");
+    int picNum=ip.minDif(Parray.get(n)); 
     textSize(72);
     fill(255);
-    text(n,790,1000);
-    int suit=n%4;
-    int number=(n/4)+6;
+    stroke(0);
+    text(numToCard(picNum),300,750);
   }
 }
 
-String numToCard(int s, int n) {
+String numToCard(int picNum) {
+  int s=picNum%4;
+  int n =(picNum/4)+6;
   String[] suits={"diamonds","clubs","hearts","spades"};
   String[] faces={"jack","queen","king","ace"};
   String suit=suits[s];
-  String face;
-  if (n>5) {
-    int t=n%5;
-    face=faces[t];
+  String face=""+n;
+  if (n>10) {
+    int t=n%10;
+    face=faces[t-1];
   }
   return face+" of "+suit;
 }

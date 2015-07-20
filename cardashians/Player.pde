@@ -11,8 +11,8 @@ class Player {
     cardCount++;
   }
   Card withdraw() {
-    return myCards.remove(0);
     cardCount--;
+    return myCards.remove(0);
   }
   boolean isWinner() {
     return cardCount==36;
