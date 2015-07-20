@@ -6,6 +6,8 @@ ArrayList<PImage> Parray;
 int n=0;
 OpenCV opencv;
 PImage img;
+Card p1card,p2card;
+Player p1,p2;
 
 void setup(){
   int width = 1000;
@@ -13,7 +15,7 @@ void setup(){
   size(width,height);
   cam = new Capture(this);
   cam.start();
-   
+  
 }
 
 void draw(){
@@ -27,14 +29,18 @@ void draw(){
     //image(ip.threshed,0,0); //depicts image in black'n'white
     image(cam,0,0);
     ip.outlineCards();
-    try{
-      image(Parray.get(n),790,0);
-    } catch(IndexOutOfBoundsException e){
-    }
-  } catch (Exception e) {}
+    //try{
+      p1card=new Card(ip.minDif(Parray.get(0)));
+      println("p1: "+p1card);
+      p2card=new Card(ip.minDif(Parray.get(1)));
+      println("p2: "+p2card);
+      //image(Parray.get(n),790,0);
+      
+      //} catch(IndexOutOfBoundsException e){}
+  } catch (NullPointerException e) {}
 }
 
-void keyPressed(){
+/*void keyPressed(){
   if(key==CODED){
     if (keyCode==RIGHT) {
       n++;
@@ -49,7 +55,7 @@ void keyPressed(){
     stroke(0);
     text(numToCard(picNum),300,750);
   }
-}
+}*/
 
 String numToCard(int picNum) {
   int s=picNum%4;
