@@ -21,7 +21,7 @@ class imgProcess{
     ch = 210;
     numCs = numCards;
     thresh(th);
-    cards =  biggestC(opencv.findContours(),numCs);
+    cards =  biggestC(opencv.findContours().getPolygonApproximation(),numCs);
   }
   
   imgProcess(OpenCV op, int numCards){

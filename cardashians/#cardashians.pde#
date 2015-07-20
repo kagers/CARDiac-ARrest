@@ -1,0 +1,77 @@
+import processing.video.*;
+
+imgProcess ip;
+Capture cam;
+ArrayList<PImage> Parray;
+int n=0;
+OpenCV opencv;
+PImage img;
+Card p1card,p2card;
+Player p1,p2;
+
+void setup(){
+  int width = 1000;
+  int height = 1000;
+  size(width,height);
+  cam = new Capture(this);
+  cam.start();
+  
+}
+
+void draw(){
+  if(cam.available()){
+    cam.read();
+    opencv = new OpenCV(this,cam);
+    ip = new imgProcess(opencv); 
+    Parray = ip.unwarpCards();
+    //image(ip.threshed,0,0); //depicts image in black'n'white
+    image(cam,0,0);
+    ip.outlineCards();
+    } 
+  }
+
+void keyPressed(){
+  if(key==CODED){
+    if (keyCode==RIGHT) {
+      n++;
+    } else if (keyCode==LEFT){
+      n--;
+    }
+  }
+  if (keyCode == ENTER){
+     try{
+      p1card=new Card(ip.minDif(Parray.get(0)));
+      println("p1: "+p1card);
+      p2card=new Card(ip.minDif(Parray.get(1)));
+      println("p2: "+p2card);
+      int compareVal=p1card.compareTo(p2card);
+      if (compareVal>0) {
+        p1.wonHand();
+        p2.lostHand();
+      } else if (compareVal<0) {
+        p1.lostHand();
+        p2.wonHand();
+      } else {
+        //war
+      }
+    } catch(IndexOutOfBoundsException e) {
+       println("No cards detected");
+     }
+  }
+}
+
+/*String numToCard(int picNum) {
+    int s=picNum%4;
+    int n =(picNum/4)+6;
+    String[] suits={"diamonds","clubs","hearts","spades"};
+    String[] faces={"jack","queen","king","ace"};
+    String suit=suits[s];
+    String face=""+n;
+    if (n>10) {
+    int t=n%10;
+    face=faces[t-1];
+    }
+    return face+" of "+suit;
+    }
+  */
+
