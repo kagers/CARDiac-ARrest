@@ -21,7 +21,7 @@ class imgProcess {
     ch = 210;
     numCs = numCards;
     thresh(th);
-    cards =  biggestC(opencv.findContours().getPolygonApproximation(), numCs);
+    cards =  biggestC(opencv.findContours(), numCs);
   }
 
   imgProcess(OpenCV op, int numCards) {
@@ -71,7 +71,7 @@ class imgProcess {
           n=j;
         }
       }
-      biggest.add(conts.remove(n));
+      biggest.add(conts.remove(n).getPolygonApproximation());
       if (conts.size() > 0) {
         max = conts.get(0);
       } else {
@@ -168,8 +168,9 @@ class imgProcess {
 
   PVector findBenter(Contour c) {
     if (c.numPoints()==4) {
+      println("kkk");
       ArrayList<PVector> points = c.getPoints();
-      ArrayList<PVector> dists = new ArrayList<Float>();
+      ArrayList<Float> dists = new ArrayList<Float>();
       for (int i=0; i<points.size (); i++) {
         dists.add(points.get(0).dist(points.get(i)));
       }
@@ -181,25 +182,26 @@ class imgProcess {
       }
       int[] order = new int[4];
       order[0] = 0;
-      order[1] = i;
-      if (i==1) {
+      order[1] = max;
+      if (max==1) {
         order[2] = 2;
         order[3] = 3;
-      } else if (i==2) {
+      } else if (max==2) {
         order[2] = 1;
         order[3] = 3;
-      } else if (i==3) {
+      } else if (max==3) {
         order[2] = 1;
         order[3] = 2;
       } 
       PVector l1 = points.get(order[0]).cross(points.get(order[1]));
       PVector l2 = points.get(order[2]).cross(points.get(order[3]));
-      PVector intersex = li.cross(l2);
+      PVector intersex = l1.cross(l2);
       return new PVector(intersex.x/intersex.z,intersex.y,intersex.z);
     } else {
       return null;
     }
   }
+  
   /*-------------------------COMPARING------------------*/
 
 

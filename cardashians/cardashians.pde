@@ -24,7 +24,7 @@ void draw(){
       cam.read();
     }
     opencv = new OpenCV(this,cam);
-    ip = new imgProcess(opencv); 
+    ip = new imgProcess(opencv,1); 
     Parray = ip.unwarpCards();
     //image(ip.threshed,0,0); //depicts image in black'n'white
     image(cam,0,0);
@@ -32,8 +32,12 @@ void draw(){
     //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
       println("p1: "+p1card);
-      p2card=new Card(ip.minDif(Parray.get(1)));
-      println("p2: "+p2card);
+      //p2card=new Card(ip.minDif(Parray.get(1)));
+      //println("p2: "+p2card);
+      PVector center = ip.findBenter(ip.cards.get(0));
+      println(center.x,center.y);
+      fill(255,0,0);
+      ellipse(center.x,center.y,10,10);
       //image(Parray.get(n),790,0);
       
       //} catch(IndexOutOfBoundsException e){}
