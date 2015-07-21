@@ -23,12 +23,18 @@ void draw(){
     if(cam.available()){
       cam.read();
     }
-    opencv = new OpenCV(this,cam);
-    ip = new imgProcess(opencv,1); 
+    PImage lectanger=loadImage("v7CDE.png");
+    image(lectanger,0,0);
+    //opencv = new OpenCV(this,cam);
+    opencv=new OpenCV(this,lectanger);
+    ip = new imgProcess(opencv,2); 
     Parray = ip.unwarpCards();
     //image(ip.threshed,0,0); //depicts image in black'n'white
-    image(cam,0,0);
+    //image(cam,0,0);
     ip.outlineCards();
+    PVector center=ip.findBenter(ip.cards.get(1));
+    println("x: "+center.x+" ,y: "+center.y);
+    /*
     //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
       println("p1: "+p1card);
@@ -40,7 +46,7 @@ void draw(){
       ellipse(center.x,center.y,10,10);
       //image(Parray.get(n),790,0);
       
-      //} catch(IndexOutOfBoundsException e){}
+      //} catch(IndexOutOfBoundsException e){}*/
   } catch (NullPointerException e) {}
 }
 
