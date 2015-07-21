@@ -168,15 +168,18 @@ class imgProcess {
 
   PVector findBenter(Contour c) {
     if (c.numPoints()==4) {
-      println("kkk");
       //gets points of the contour of a card
       ArrayList<PVector> points = c.getPoints();
+      for (PVector p: points){
+        p.z=1.0;
+      }
+
       //initialize array of all distances from first point??
       ArrayList<Float> dists = new ArrayList<Float>();
       for (int i=0; i<points.size(); i++) {
         dists.add(points.get(0).dist(points.get(i)));
       }
-      println(dists);
+
       //find point index with greatest distance from first point. to find diagonal?
       int max = 0;
       for (int i=0; i<dists.size (); i++) {
@@ -184,7 +187,7 @@ class imgProcess {
           max = i;
         }
       }
-      println("max: "+max);
+
       //orders the point indexes so that diagonals are next to each other?
       int[] order = new int[4];
       order[0] = 0;
@@ -199,23 +202,18 @@ class imgProcess {
         order[2] = 1;
         order[3] = 2;
       }
-      String s="[";
-      for (int i=0;i<order.length;i++) {
-        s+=order[i]+", ";
-      }
-      println(s+"]");
+
       //finds cross product of diagonal points
       PVector l1 = points.get(order[0]).cross(points.get(order[1]));
-      println("1x: "+l1.x+", 1y: "+l1.y+", 1z:"+l1.z);
+
       PVector l2 = points.get(order[2]).cross(points.get(order[3]));
-      println("2x: "+l2.x+", 2y: "+l2.y+", 2z:"+l2.z);
+
       //finds intersection of the two diagonals
       PVector intersex = l1.cross(l2);
-      println("ix: "+intersex.x+", iy: "+intersex.y+", iz:"+intersex.z);
-      PVector result=new PVector(intersex.x/intersex.z,intersex.y,intersex.z);
-      println("px: "+result.x+", py: "+result.y+", pz:"+result.z);
+
+      PVector result=new PVector(intersex.x/intersex.z,intersex.y/intersex.z);
+
       return result;
-      //return new PVector(intersex.x/intersex.z,intersex.y,intersex.z);
     } else {
       return null;
     }

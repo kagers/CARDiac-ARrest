@@ -19,38 +19,45 @@ void setup(){
 }
 
 void draw(){
-  try {
+  // try {
     if(cam.available()){
       cam.read();
     }
-    PImage lectanger=loadImage("v7CDE.png");
-    image(lectanger,0,0);
-    //opencv = new OpenCV(this,cam);
-    opencv=new OpenCV(this,lectanger);
+    //PImage lectanger=loadImage("v7CDE.png");
+    //image(lectanger,0,0);
+    opencv = new OpenCV(this,cam);
+    //opencv=new OpenCV(this,lectanger);
     ip = new imgProcess(opencv,2); 
     Parray = ip.unwarpCards();
     //image(ip.threshed,0,0); //depicts image in black'n'white
-    //image(cam,0,0);
+    image(cam,0,0);
     ip.outlineCards();
-    PVector center=ip.findBenter(ip.cards.get(1));
-    println("x: "+center.x+" ,y: "+center.y);
+    PVector center=ip.findBenter(ip.cards.get(0));
+    PVector center2=ip.findBenter(ip.cards.get(1));
+    fill(255,0,0);
+    if (center!=null) {
+    ellipse(center.x,center.y,10,10);
+    }
+    if (center2!=null) {
+       ellipse(center2.x,center2.y,10,10);
+    }
+    //ellipse(346.0,5.49*pow(10,7),10,10);
     /*
     //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
-      println("p1: "+p1card);
       //p2card=new Card(ip.minDif(Parray.get(1)));
-      //println("p2: "+p2card);
+
       PVector center = ip.findBenter(ip.cards.get(0));
-      println(center.x,center.y);
+      
       fill(255,0,0);
       ellipse(center.x,center.y,10,10);
       //image(Parray.get(n),790,0);
       
       //} catch(IndexOutOfBoundsException e){}*/
-  } catch (NullPointerException e) {}
+    // } catch (NullPointerException e) {}
 }
 
-/*void keyPressed(){
+void keyPressed(){
   if(key==CODED){
     if (keyCode==RIGHT) {
       n++;
@@ -59,13 +66,18 @@ void draw(){
     }
   }
   if (keyCode == ENTER){
-    int picNum=ip.minDif(Parray.get(n)); 
+    /*int picNum=ip.minDif(Parray.get(n)); 
     textSize(72);
     fill(255);
     stroke(0);
-    text(numToCard(picNum),300,750);
+    text(numToCard(picNum),300,750);*/
+    PVector center=ip.findBenter(ip.cards.get(0));
+    fill(255,0,0);
+    if (center!=null) {
+    ellipse(center.x,center.y,10,10);
+    }
   }
-}*/
+}
 
 String numToCard(int picNum) {
   int s=picNum%4;
