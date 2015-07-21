@@ -2,7 +2,7 @@ import processing.video.*;
 
 imgProcess ip;
 Capture cam;
-ArrayList<PImage> Parray;
+ArrayList<PVector> Carray;
 int n=0;
 OpenCV opencv;
 PImage img;
@@ -19,7 +19,7 @@ void setup(){
 }
 
 void draw(){
-  // try {
+  //try {
     if(cam.available()){
       cam.read();
     }
@@ -28,20 +28,15 @@ void draw(){
     opencv = new OpenCV(this,cam);
     //opencv=new OpenCV(this,lectanger);
     ip = new imgProcess(opencv,2); 
-    Parray = ip.unwarpCards();
+    //Parray = ip.unwarpCards();
     //image(ip.threshed,0,0); //depicts image in black'n'white
     image(cam,0,0);
     ip.outlineCards();
-    PVector center=ip.findBenter(ip.cards.get(0));
-    PVector center2=ip.findBenter(ip.cards.get(1));
-    fill(255,0,0);
-    if (center!=null) {
-    ellipse(center.x,center.y,10,10);
+    Carray=ip.getBenters();
+    for (PVector p:Carray) {
+      fill(255,0,0);
+      ellipse(p.x,p.y,10,10);
     }
-    if (center2!=null) {
-       ellipse(center2.x,center2.y,10,10);
-    }
-    //ellipse(346.0,5.49*pow(10,7),10,10);
     /*
     //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
@@ -54,7 +49,7 @@ void draw(){
       //image(Parray.get(n),790,0);
       
       //} catch(IndexOutOfBoundsException e){}*/
-    // } catch (NullPointerException e) {}
+    //} catch (Exception e) {}
 }
 
 void keyPressed(){

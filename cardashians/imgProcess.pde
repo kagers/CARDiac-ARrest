@@ -11,7 +11,7 @@ class imgProcess {
   ArrayList<Contour> cards; //stores contours of all the cards
   int ch, cw; //unwarped card demensions
   int numCs; //number of cards
-
+  ArrayList<PVector> benters;
 
   /*-------------------------Constructors--------------------------------*/
 
@@ -102,6 +102,90 @@ class imgProcess {
     outlineRects(cards);
   }
 
+  PVector findBenter(Contour c) {
+    if (c.numPoints()==4) {
+      //gets points of the contour of a card
+      ArrayList<PVector> points = c.getPoints();
+      for (PVector p: points){
+        p.z=1.0;
+      }
+
+      //initialize array of all distances from first point??
+      ArrayList<Float> dists = new ArrayList<Float>();
+      for (int i=0; i<points.size(); i++) {
+        dists.add(points.get(0).dist(points.get(i)));
+      }
+
+      //find point index with greatest distance from first point. to find diagonal?
+      int max = 0;
+      for (int i=0; i<dists.size (); i++) {
+        if (dists.get(i)>dists.get(max)) {
+          max = i;
+        }
+      }
+
+      //orders the point indexes so that diagonals are next to each other?
+      int[] order = new int[4];
+      order[0] = 0;
+      order[1] = max;
+      if (max==1) {
+        order[2] = 2;
+        order[3] = 3;
+      } else if (max==2) {
+        order[2] = 1;
+        order[3] = 3;
+      } else if (max==3) {
+        order[2] = 1;
+        order[3] = 2;
+      }
+
+      //finds cross product of diagonal points
+      PVector l1 = points.get(order[0]).cross(points.get(order[1]));
+
+      PVector l2 = points.get(order[2]).cross(points.get(order[3]));
+
+      //finds intersection of the two diagonals
+      PVector intersex = l1.cross(l2);
+
+      PVector result=new PVector(intersex.x/intersex.z,intersex.y/intersex.z);
+
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  ArrayList<PVector> getBenters() {
+    ArrayList<PVector> result=new ArrayList<PVector>();
+    PVector max=findBenter(cards.get(0));
+    result.add(max);
+    for (int i=0;i<cards.size();i++) {
+      println(i);
+      if (findBenter(cards.get(i)).x<max.x) {
+        PVector tmp=findBenter(cards.get(i));
+        result.set(0,tmp);
+        result.set(1,max);
+      } else {
+        result.add(findBenter(cards.get(i)));
+      }
+    }
+    return result;
+  }
+
+  ArrayList<Contour> getSortedCards() {
+    ArrayList<Contour> tmp=new ArrayList<Contour>();
+    if (findBenter(cards.get(0)).x<findBenter(cards.get(1)).x) {
+      tmp.add(cards.get(0));
+      tmp.add(cards.get(1));
+    } else {
+      tmp.add(cards.get(1));
+      tmp.add(cards.get(0));
+    }
+    cards=tmp;
+    return cards;
+  }  
+  
+  
   /* ----------------------Warp Persepective Methods-----------------------------*/
 
   /*
@@ -166,58 +250,8 @@ class imgProcess {
     return endMarker;
   }
 
-  PVector findBenter(Contour c) {
-    if (c.numPoints()==4) {
-      //gets points of the contour of a card
-      ArrayList<PVector> points = c.getPoints();
-      for (PVector p: points){
-        p.z=1.0;
-      }
+  
 
-      //initialize array of all distances from first point??
-      ArrayList<Float> dists = new ArrayList<Float>();
-      for (int i=0; i<points.size(); i++) {
-        dists.add(points.get(0).dist(points.get(i)));
-      }
-
-      //find point index with greatest distance from first point. to find diagonal?
-      int max = 0;
-      for (int i=0; i<dists.size (); i++) {
-        if (dists.get(i)>dists.get(max)) {
-          max = i;
-        }
-      }
-
-      //orders the point indexes so that diagonals are next to each other?
-      int[] order = new int[4];
-      order[0] = 0;
-      order[1] = max;
-      if (max==1) {
-        order[2] = 2;
-        order[3] = 3;
-      } else if (max==2) {
-        order[2] = 1;
-        order[3] = 3;
-      } else if (max==3) {
-        order[2] = 1;
-        order[3] = 2;
-      }
-
-      //finds cross product of diagonal points
-      PVector l1 = points.get(order[0]).cross(points.get(order[1]));
-
-      PVector l2 = points.get(order[2]).cross(points.get(order[3]));
-
-      //finds intersection of the two diagonals
-      PVector intersex = l1.cross(l2);
-
-      PVector result=new PVector(intersex.x/intersex.z,intersex.y/intersex.z);
-
-      return result;
-    } else {
-      return null;
-    }
-  }
   
   /*-------------------------COMPARING------------------*/
 
