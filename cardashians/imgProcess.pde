@@ -273,11 +273,11 @@ class imgProcess {
     for (int i=0; i<aa.length; i++) {
       ret += cc[i];
     }
-    loadPixels();
+    /*loadPixels();
     for (int i=0; i<aa.length; i++) {
       pixels[i] = color((int)cc[i]);
     }
-    updatePixels();
+    updatePixels();*/
     return ret;
   }
 
