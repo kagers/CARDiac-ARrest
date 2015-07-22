@@ -16,41 +16,41 @@ void setup(){
   size(width,height);
   cam = new Capture(this);
   cam.start();
-  
+  p1=new Player();
+  p2=new Player();
+  noStroke();
 }
 
 void draw(){
-
-  if(cam.available()){
-    cam.read();
-  }
-  opencv = new OpenCV(this,cam);
-  ip = new imgProcess(opencv,2); 
-  Parray = ip.unwarpCards();
-  //image(ip.threshed,0,0); //depicts image in black'n'white
-  image(cam,0,0);
-  ip.outlineCards();
-  Beret=ip.getBenters();
-  for (PVector p:Beret) {
-    fill(255,0,0);
-    ellipse(p.x,p.y,10,10);
-  }
+    if(cam.available()){
+      cam.read();
+    }
+    try {
+      opencv = new OpenCV(this,cam);
+      ip = new imgProcess(opencv,2);
+      Parray = ip.unwarpCards();
+      image(cam,0,0);
+      ip.outlineCards();
+      Beret=ip.getBenters();
+      for (PVector p:Beret) {
+        fill(255,0,0);
+        ellipse(p.x,p.y,10,10);
+      }
+    } catch (Exception e) {}
     
-  if(p1.isWinner()){
-    noLoop();
-    text("p1 winnerp1  winner chp1icken dinner",100,100);
-  } else if (p2.isWinner()){
-    noLoop();
-    text("p2 Congragulations collect your prize at the front desk!",100,100);
-  }
+    if(p1.isWinner()){
+      noLoop();
+      text("p1 winnerp1  winner chp1icken dinner",100,100);
+    } else if (p2.isWinner()){
+      noLoop();
+      text("p2 Congragulations collect your prize at the front desk!",100,100);
+    }
 
-    
-
-  stroke(0);
-  fill(255);
-  textSize(10);
-  text("P1 has " + p1.cardCount + " cards", width/4,height-100);
-  text("P2 has " + p2.cardCount + " cards", width*(3/4), height-100);
+    fill(0);
+    textSize(36);
+    println("ay");
+    text("P1 has " + p1.cardCount + " cards", width/12,height-100);
+    text("P2 has " + p2.cardCount + " cards", width-400, height-100);
 
 }
 
@@ -74,23 +74,30 @@ void keyPressed(){
       ellipse(center.x,center.y,10,10);
     */
 
-    try{
+    //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
+      println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
       p2card=new Card(ip.minDif(Parray.get(1)));
+      println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
       if(p1card.compareTo(p2card) > 0){
         p1.wonHand();
         p2.lostHand();
+        println("p1 won hand");
       } else if (p1card.compareTo(p2card) < 0){
         p1.lostHand();
         p2.wonHand();
+        println("p2 won hand");
       } else {
         //war
-      } 
-    } catch (NullPointerException e){}
+      }
+      fill(255);
+      rect(0,cam.height,width,height-cam.height);
+      println("outside");
+      //} catch (NullPointerException e){}
   }
 
 }
-}
+
 
 String numToCard(int picNum) {
   int s=picNum%4;
@@ -106,4 +113,6 @@ String numToCard(int picNum) {
   return face+" of "+suit;
 }
     
-
+/*int war() {
+  //int c=new Card(ip.minDif(Parray.get(0)));
+  }*/
