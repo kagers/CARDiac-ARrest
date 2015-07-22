@@ -106,13 +106,13 @@ class imgProcess {
     if (c.numPoints()==4) {
       //gets points of the contour of a card
       ArrayList<PVector> points = c.getPoints();
-      for (PVector p: points){
+      for (PVector p : points) {
         p.z=1.0;
       }
 
       //initialize array of all distances from first point??
       ArrayList<Float> dists = new ArrayList<Float>();
-      for (int i=0; i<points.size(); i++) {
+      for (int i=0; i<points.size (); i++) {
         dists.add(points.get(0).dist(points.get(i)));
       }
 
@@ -147,7 +147,7 @@ class imgProcess {
       //finds intersection of the two diagonals
       PVector intersex = l1.cross(l2);
 
-      PVector result=new PVector(intersex.x/intersex.z,intersex.y/intersex.z);
+      PVector result=new PVector(intersex.x/intersex.z, intersex.y/intersex.z);
 
       return result;
     } else {
@@ -159,12 +159,12 @@ class imgProcess {
     ArrayList<PVector> result=new ArrayList<PVector>();
     PVector max=findBenter(cards.get(0));
     result.add(max);
-    for (int i=0;i<cards.size();i++) {
+    for (int i=0; i<cards.size (); i++) {
       println(i);
       if (findBenter(cards.get(i)).x<max.x) {
         PVector tmp=findBenter(cards.get(i));
-        result.set(0,tmp);
-        result.set(1,max);
+        result.set(0, tmp);
+        result.set(1, max);
       } else {
         result.add(findBenter(cards.get(i)));
       }
@@ -184,8 +184,8 @@ class imgProcess {
     cards=tmp;
     return cards;
   }  
-  
-  
+
+
   /* ----------------------Warp Persepective Methods-----------------------------*/
 
   /*
@@ -250,9 +250,9 @@ class imgProcess {
     return endMarker;
   }
 
-  
 
-  
+
+
   /*-------------------------COMPARING------------------*/
 
 
@@ -274,10 +274,10 @@ class imgProcess {
       ret += cc[i];
     }
     /*loadPixels();
-    for (int i=0; i<aa.length; i++) {
-      pixels[i] = color((int)cc[i]);
-    }
-    updatePixels();*/
+     for (int i=0; i<aa.length; i++) {
+     pixels[i] = color((int)cc[i]);
+     }
+     updatePixels();*/
     return ret;
   }
 

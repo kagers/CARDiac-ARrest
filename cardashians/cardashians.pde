@@ -8,6 +8,7 @@ OpenCV opencv;
 PImage img;
 Card p1card,p2card;
 Player p1,p2;
+Sprite s;
 
 void setup(){
   int width = 1000;
@@ -15,12 +16,13 @@ void setup(){
   size(width,height);
   cam = new Capture(this);
   cam.start();
-  
+  s = new Sprite(100,100,"../pics/frames/frame",5);
 }
 
 void draw(){
+  background(255);
   //try {
-    if(cam.available()){
+    /*if(cam.available()){
       cam.read();
     }
     //PImage lectanger=loadImage("v7CDE.png");
@@ -36,7 +38,7 @@ void draw(){
     for (PVector p:Carray) {
       fill(255,0,0);
       ellipse(p.x,p.y,10,10);
-    }
+    }*/
     /*
     //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
