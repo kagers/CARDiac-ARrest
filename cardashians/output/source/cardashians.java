@@ -23,7 +23,7 @@ public class cardashians extends PApplet {
 
 imgProcess ip;
 Capture cam;
-ArrayList<PImage> Parray;
+ArrayList<PVector> Carray;
 int n=0;
 OpenCV opencv;
 PImage img;
@@ -40,28 +40,40 @@ public void setup(){
 }
 
 public void draw(){
-  try {
+  //try {
     if(cam.available()){
       cam.read();
     }
+    //PImage lectanger=loadImage("v7CDE.png");
+    //image(lectanger,0,0);
     opencv = new OpenCV(this,cam);
-    ip = new imgProcess(opencv); 
-    Parray = ip.unwarpCards();
+    //opencv=new OpenCV(this,lectanger);
+    ip = new imgProcess(opencv,2); 
+    //Parray = ip.unwarpCards();
     //image(ip.threshed,0,0); //depicts image in black'n'white
     image(cam,0,0);
     ip.outlineCards();
+    Carray=ip.getBenters();
+    for (PVector p:Carray) {
+      fill(255,0,0);
+      ellipse(p.x,p.y,10,10);
+    }
+    /*
     //try{
       p1card=new Card(ip.minDif(Parray.get(0)));
-      println("p1: "+p1card);
-      p2card=new Card(ip.minDif(Parray.get(1)));
-      println("p2: "+p2card);
+      //p2card=new Card(ip.minDif(Parray.get(1)));
+
+      PVector center = ip.findBenter(ip.cards.get(0));
+      
+      fill(255,0,0);
+      ellipse(center.x,center.y,10,10);
       //image(Parray.get(n),790,0);
       
-      //} catch(IndexOutOfBoundsException e){}
-  } catch (NullPointerException e) {}
+      //} catch(IndexOutOfBoundsException e){}*/
+    //} catch (Exception e) {}
 }
 
-/*void keyPressed(){
+public void keyPressed(){
   if(key==CODED){
     if (keyCode==RIGHT) {
       n++;
@@ -70,13 +82,18 @@ public void draw(){
     }
   }
   if (keyCode == ENTER){
-    int picNum=ip.minDif(Parray.get(n)); 
+    /*int picNum=ip.minDif(Parray.get(n)); 
     textSize(72);
     fill(255);
     stroke(0);
-    text(numToCard(picNum),300,750);
+    text(numToCard(picNum),300,750);*/
+    PVector center=ip.findBenter(ip.cards.get(0));
+    fill(255,0,0);
+    if (center!=null) {
+    ellipse(center.x,center.y,10,10);
+    }
   }
-}*/
+}
 
 public String numToCard(int picNum) {
   int s=picNum%4;
@@ -157,13 +174,11 @@ class Player {
     cardCount=18;
     myCards=new ArrayList<Card>();
   }
-  public void addToDeck(Card c){
-    myCards.add(c);
+  public void wonHand(){
     cardCount++;
   }
-  public Card withdraw() {
+  public void lostHand() {
     cardCount--;
-    return myCards.remove(0);
   }
   public boolean isWinner() {
     return cardCount==36;
@@ -175,7 +190,7 @@ class Player {
 
 
 
-class imgProcess{
+class imgProcess {
 
   /*--------------------------Variables-----------------------------------*/
   OpenCV opencv;
@@ -183,163 +198,251 @@ class imgProcess{
   ArrayList<Contour> cards; //stores contours of all the cards
   int ch, cw; //unwarped card demensions
   int numCs; //number of cards
-
+  ArrayList<PVector> benters;
 
   /*-------------------------Constructors--------------------------------*/
 
-  imgProcess(OpenCV op, int numCards, int th){
+  imgProcess(OpenCV op, int numCards, int th) {
     opencv = op;
     cw = 310;
     ch = 210;
     numCs = numCards;
     thresh(th);
-    cards =  biggestC(opencv.findContours(),numCs);
+    cards =  biggestC(opencv.findContours(), numCs);
   }
-  
-  imgProcess(OpenCV op, int numCards){
+
+  imgProcess(OpenCV op, int numCards) {
     this(op, numCards, -50);
   }
-  
-  imgProcess(OpenCV op){
+
+  imgProcess(OpenCV op) {
     this(op, 2, -50);
   }
-  
+
   /*-------------------------------Methods--------------------------------*/
-  
+
   /*
     sets dimensions for unwarped card
-  */
-  public void setCardD(int newCh,int newCw){
+   */
+  public void setCardD(int newCh, int newCw) {
     ch = newCh;
     cw = newCw;
   }
-  
-  
+
+
   /*
     runs adaptive threshold
-  */
-  public void thresh(int threshold){
-    opencv.adaptiveThreshold(591,threshold);
+   */
+  public void thresh(int threshold) {
+    opencv.adaptiveThreshold(591, threshold);
     threshed = opencv.getSnapshot();    
     opencv.loadImage(threshed);
   }
 
-  
+
   /*-----------------------------Contour Methods----------------------------*/
-                   
+
   /*
     finds numCard biggest contours in conts
-    based on area and stores in arraylist
-  */
-  public ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards){
+   based on area and stores in arraylist
+   */
+  public ArrayList<Contour> biggestC(ArrayList<Contour> conts, int numCards) {
     Contour max = conts.get(0);   // 
     ArrayList<Contour> biggest = new ArrayList<Contour>();
     int n=0;
-    for(int i=0; i <numCards;i++){
-      for(int j = 0;j<conts.size();j++){
+    for (int i=0; i <numCards; i++) {
+      for (int j = 0; j<conts.size (); j++) {
         Contour c = conts.get(j);
-        if(c.area()>max.area()){
+        if (c.area()>max.area()) {
           max = c;
           n=j;
         }
       }
-      biggest.add(conts.remove(n));
-      if(conts.size() > 0){
+      biggest.add(conts.remove(n).getPolygonApproximation());
+      if (conts.size() > 0) {
         max = conts.get(0);
       } else {
         break;
       }
     }
-    return biggest; 
+    return biggest;
   }
 
   /*
     outlines the cards into a green rectangle
-    must be run after image is displayed in main
-  */
-  public void outlineRects(ArrayList<Contour> conts){
+   must be run after image is displayed in main
+   */
+  public void outlineRects(ArrayList<Contour> conts) {
     noFill();
-    for(Contour c : conts){
+    for (Contour c : conts) {
       beginShape();
       strokeWeight(4);
-      stroke(0,255,0);
-      for (PVector point : c.getPolygonApproximation().getPoints()) {
+      stroke(0, 255, 0);
+      for (PVector point : c.getPolygonApproximation ().getPoints()) {
         vertex(point.x, point.y);
       }
       endShape(CLOSE);
-    }  
+    }
   }
-  
-  public void outlineCards(){
+
+  public void outlineCards() {
     outlineRects(cards);
   }
 
+  public PVector findBenter(Contour c) {
+    if (c.numPoints()==4) {
+      //gets points of the contour of a card
+      ArrayList<PVector> points = c.getPoints();
+      for (PVector p: points){
+        p.z=1.0f;
+      }
+
+      //initialize array of all distances from first point??
+      ArrayList<Float> dists = new ArrayList<Float>();
+      for (int i=0; i<points.size(); i++) {
+        dists.add(points.get(0).dist(points.get(i)));
+      }
+
+      //find point index with greatest distance from first point. to find diagonal?
+      int max = 0;
+      for (int i=0; i<dists.size (); i++) {
+        if (dists.get(i)>dists.get(max)) {
+          max = i;
+        }
+      }
+
+      //orders the point indexes so that diagonals are next to each other?
+      int[] order = new int[4];
+      order[0] = 0;
+      order[1] = max;
+      if (max==1) {
+        order[2] = 2;
+        order[3] = 3;
+      } else if (max==2) {
+        order[2] = 1;
+        order[3] = 3;
+      } else if (max==3) {
+        order[2] = 1;
+        order[3] = 2;
+      }
+
+      //finds cross product of diagonal points
+      PVector l1 = points.get(order[0]).cross(points.get(order[1]));
+
+      PVector l2 = points.get(order[2]).cross(points.get(order[3]));
+
+      //finds intersection of the two diagonals
+      PVector intersex = l1.cross(l2);
+
+      PVector result=new PVector(intersex.x/intersex.z,intersex.y/intersex.z);
+
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  public ArrayList<PVector> getBenters() {
+    ArrayList<PVector> result=new ArrayList<PVector>();
+    PVector max=findBenter(cards.get(0));
+    result.add(max);
+    for (int i=0;i<cards.size();i++) {
+      println(i);
+      if (findBenter(cards.get(i)).x<max.x) {
+        PVector tmp=findBenter(cards.get(i));
+        result.set(0,tmp);
+        result.set(1,max);
+      } else {
+        result.add(findBenter(cards.get(i)));
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<Contour> getSortedCards() {
+    ArrayList<Contour> tmp=new ArrayList<Contour>();
+    if (findBenter(cards.get(0)).x<findBenter(cards.get(1)).x) {
+      tmp.add(cards.get(0));
+      tmp.add(cards.get(1));
+    } else {
+      tmp.add(cards.get(1));
+      tmp.add(cards.get(0));
+    }
+    cards=tmp;
+    return cards;
+  }  
+  
+  
   /* ----------------------Warp Persepective Methods-----------------------------*/
 
   /*
     unwarps a single contour
-  */
-  public PImage unwarpC(Contour c){    
-    PImage newImg =createImage(ch,cw, ARGB);
-    opencv.toPImage(warpPerspective(c.getPolygonApproximation().getPoints(),ch,cw), newImg);
+   */
+  public PImage unwarpC(Contour c) {    
+    PImage newImg =createImage(ch, cw, ARGB);
+    opencv.toPImage(warpPerspective(c.getPolygonApproximation().getPoints(), ch, cw), newImg);
     return newImg;
   }
 
   /*
     unwarps a list of contours
-  */
-  public ArrayList<PImage> unwarpCards(ArrayList<Contour> contours){
+   */
+  public ArrayList<PImage> unwarpCards(ArrayList<Contour> contours) {
     ArrayList<PImage> p = new ArrayList<PImage>();
-    for(Contour c: contours){
+    for (Contour c : contours) {
       p.add(unwarpC(c));
     }
     return p;
   }
 
-  public ArrayList<PImage> unwarpCards(){
+  public ArrayList<PImage> unwarpCards() {
     return unwarpCards(cards);
   }
 
   public Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
     //sets up the temporary location for the warped image
     Point[] canons=new Point[4];
-    canons[0]=new Point(w,h);
-    canons[1]=new Point(w,0);
-    canons[2]=new Point(0,0);
-    canons[3]=new Point(0,h);
+    canons[0]=new Point(w, h);
+    canons[1]=new Point(w, 0);
+    canons[2]=new Point(0, 0);
+    canons[3]=new Point(0, h);
     // canons[0] = new Point(w, 0);
     // canons[1] = new Point(0, 0);
     // canons[2] = new Point(0, h);
     // canons[3] = new Point(w, h);
-  
+
     //makes matrix of those points
     MatOfPoint2f canonMarker=new MatOfPoint2f();
     canonMarker.fromArray(canons);
-  
+
     //makes array of the actual coordinates of the original image
     Point[] reals=new Point[4];
-    for (int i=0;i<4;i++) {
+    for (int i=0; i<4; i++) {
       reals[i]=new Point(inputPoints.get(i).x, inputPoints.get(i).y);
     }
     MatOfPoint2f realMarker=new MatOfPoint2f(reals);
 
     //calculates diff in perspective b/w straight temp image and original skewed image
-    return Imgproc.getPerspectiveTransform(realMarker,canonMarker);
+    return Imgproc.getPerspectiveTransform(realMarker, canonMarker);
   }
 
   public Mat warpPerspective(ArrayList<PVector> inputPoints, int w, int h) {
     //gets the perspective transform diff b/w original and straight temp
-    Mat transform=getPerspectiveTransformation(inputPoints,w,h);
-  
+    Mat transform=getPerspectiveTransformation(inputPoints, w, h);
+
     //makes location for final processed image
-    Mat endMarker=new Mat(w,h,CvType.CV_8UC1);
+    Mat endMarker=new Mat(w, h, CvType.CV_8UC1);
     //applies perspective difference to create final image 
-    Imgproc.warpPerspective(opencv.getColor(), endMarker, transform, new Size(w,h));
+    Imgproc.warpPerspective(opencv.getColor(), endMarker, transform, new Size(w, h));
     return endMarker;
   }
-  /*-------------------------COMPARING------------------*/
-    
+
   
+
+  
+  /*-------------------------COMPARING------------------*/
+
+
   public long absDif(PImage a, PImage b, boolean reverse) {
     a.loadPixels();
     int[] aa = a.pixels;
@@ -367,11 +470,11 @@ class imgProcess{
 
   public int minDif(PImage a) {
     ArrayList<PImage> L=new ArrayList<PImage>();
-    for (int i=0;i<36;i++) {
+    for (int i=0; i<36; i++) {
       PImage newCard=loadImage("../pics/c"+i+".png");
       L.add(newCard);
     }
-    long dif = absDif(a, L.get(0),true);
+    long dif = absDif(a, L.get(0), true);
     int ret = 0;
     long b;
     for (int i=0; i<L.size (); i++) {
@@ -392,8 +495,8 @@ class imgProcess{
     println(ret);
     return ret;
   }
-
 }
+
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "cardashians" };
     if (passedArgs != null) {
