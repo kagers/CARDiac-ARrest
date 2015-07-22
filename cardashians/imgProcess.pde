@@ -160,7 +160,7 @@ class imgProcess {
     PVector max=findBenter(cards.get(0));
     result.add(max);
     for (int i=0;i<cards.size();i++) {
-      println(i);
+     
       if (findBenter(cards.get(i)).x<max.x) {
         PVector tmp=findBenter(cards.get(i));
         result.set(0,tmp);
@@ -295,17 +295,17 @@ class imgProcess {
       if (b<dif) {
         dif=b;
         ret=i;
-        println(i);
+        
       }
       b = absDif(a, L.get(i), false);
       if (b<dif) {
         dif=b;
         ret=i;
-        println(i);
+        
       }
     }
-    println(dif);
-    println(ret);
+   
+    
     return ret;
   }
 }
