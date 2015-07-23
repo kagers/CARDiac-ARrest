@@ -25,12 +25,13 @@ imgProcess ip;
 Capture cam;
 ArrayList<PVector> Beret;
 ArrayList<PImage> Parray;
-int n=0;
 OpenCV opencv;
 PImage img;
 Card p1card,p2card;
 Player p1,p2;
 Sprite s1,s2;
+int n=0;
+PImage cardTest;
 
 public void setup(){
   int width = 1000;
@@ -42,47 +43,52 @@ public void setup(){
   p2=new Player();
   noStroke();
   s1=new Sprite(0,0,"../pics/sprites/frame",5);
+  s2=new Sprite(0,0,"../pics/sprites/frame",5);
 }
 
 public void draw(){
-    if(cam.available()){
-      cam.read();
+  if(cam.available()){
+    cam.read();
 
-      opencv = new OpenCV(this,cam);
-      ip = new imgProcess(opencv,2);
-      Parray = ip.unwarpCards();
-      imageMode(NORMAL);
-      image(cam,0,0);
-      ip.outlineCards();
+    opencv = new OpenCV(this,cam);
+    ip = new imgProcess(opencv,2);
+    Parray = ip.unwarpCards();
+    imageMode(NORMAL);
+    image(cam,0,0);
+    ip.outlineCards();
+    try{
       Beret=ip.getBenters();
       //for (PVector p:Beret) {
       //fill(255,0,0);
-        // ellipse(p.x,p.y,10,10);
-          //}
-      try{
+      // ellipse(p.x,p.y,10,10);
+      //}
       s1.xCor=(int)Beret.get(0).x;
       s1.yCor=(int)Beret.get(0).y;
       s1.display();
       s2.xCor=(int)Beret.get(1).x;
-      s2.xCor=(int)Beret.get(1).y;
+      s2.yCor=(int)Beret.get(1).y;
       s2.display();
-      } catch(NullPointerException e){}
+    } catch(NullPointerException e){}
+    try{
+      image(Parray.get(n),790,0);
+    } catch(IndexOutOfBoundsException e){
     }
+  }
  
     
-    if(p1.isWinner()){
-      noLoop();
-      text("p1 winnerp1  winner chp1icken dinner",100,100);
-    } else if (p2.isWinner()){
-      noLoop();
-      text("p2 Congragulations collect your prize at the front desk!",100,100);
-    }
-    fill(0);
-    textSize(36);
-    println("ay");
-    text("P1 has " + p1.cardCount + " cards", width/12,height-100);
-    text("P2 has " + p2.cardCount + " cards", width-400, height-100);
-    //s = new Sprite(100,100,"../pics/frames/frame",5);
+  if(p1.isWinner()){
+    noLoop();
+    text("p1 winnerp1  winner chp1icken dinner",100,100);
+  } else if (p2.isWinner()){
+    noLoop();
+    text("p2 Congragulations collect your prize at the front desk!",100,100);
+  }
+  fill(0);
+  textSize(36);
+  println("ay");
+  text("P1 has " + p1.cardCount + " cards", width/12,height-400);
+  text("P2 has " + p2.cardCount + " cards", width-400, height-400);
+  //s = new Sprite(100,100,"../pics/frames/frame",5);
 }
 
 public void keyPressed(){
@@ -94,32 +100,31 @@ public void keyPressed(){
     }
   }
   if (keyCode == ENTER){
-    //try {
-      // int ind1=ip.minDif(Parray.get(0));
-  //     s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
-  //     s1.display();
-  //     p1card=new Card(ind1);
-  //     println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
-  //     int ind2=ip.minDif(Parray.get(1));
-  //     s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
-  //     s2.display();
-  //     p2card=new Card(ind2);
-  //     println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
-  //     if(p1card.compareTo(p2card) > 0){
-  //       p1.wonHand();
-  //       p2.lostHand();
-  //       println("p1 won hand");
-  //     } else if (p1card.compareTo(p2card) < 0){
-  //       p1.lostHand();
-  //       p2.wonHand();
-  //       println("p2 won hand");
-  //     } else {
-  //       //war
-  //     }
-  //     fill(255);
-  //     rect(0,cam.height,width,height-cam.height);
-  //     println("outside");
-  //     //} catch (NullPointerException e){}
+    int picNum = ip.minDif(Parray.get(0));
+    println("p1 "+numToCard(picNum));
+    int ind1=ip.minDif(Parray.get(0));
+    p1card=new Card(ind1);
+    int ind2=ip.minDif(Parray.get(1));
+    p2card=new Card(ind2);
+
+    int picNum2 = ip.minDif(Parray.get(1));
+    println("p2 "+numToCard(picNum2));
+
+    if(p1card.compareTo(p2card) > 0){
+      p1.wonHand();
+      p2.lostHand();
+      println("p1 won hand");
+    } else if (p1card.compareTo(p2card) < 0){
+      p1.lostHand();
+      p2.wonHand();
+      println("p2 won hand");
+    } else {
+      //war
+    }
+    fill(255);
+    rect(0,cam.height,width,height-cam.height);
+    println("outside");
+
   }
 }
 
@@ -139,8 +144,8 @@ public String numToCard(int picNum) {
 }
     
 /*int war() {
-  //int c=new Card(ip.minDif(Parray.get(0)));
-  }*/
+//int c=new Card(ip.minDif(Parray.get(0)));
+}*/
 class Card {
   PImage photo;
   
@@ -453,7 +458,7 @@ class imgProcess {
    */
   public PImage unwarpC(Contour c) {    
     PImage newImg =createImage(ch, cw, ARGB);
-    opencv.toPImage(warpPerspective(c.getPolygonApproximation().getPoints(), ch, cw), newImg);
+    opencv.toPImage(warpPerspective(realign(c), ch, cw), newImg);
     return newImg;
   }
 
@@ -470,6 +475,20 @@ class imgProcess {
 
   public ArrayList<PImage> unwarpCards() {
     return unwarpCards(cards);
+  }
+
+  public ArrayList<PVector> realign( Contour c ){
+    
+    ArrayList<PVector> points;
+    
+    points = c.getPolygonApproximation().getPoints();
+    
+    if ( points.get(0).x  < points.get(1).x ){ // if the first point is the left and not right edge
+      PVector temp = points.get(0);
+      points.remove(0);
+      points.add(3,temp);
+    }
+    return points;
   }
 
   public Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {
