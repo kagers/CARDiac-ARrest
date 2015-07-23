@@ -192,7 +192,11 @@ class imgProcess {
    */
   PImage unwarpC(Contour c) {    
     PImage newImg =createImage(ch, cw, ARGB);
-    opencv.toPImage(warpPerspective(realign(c), ch, cw), newImg);
+    ArrayList<PVector> pv = realign(c);
+    if(pv == null){
+      return null;
+    }
+    opencv.toPImage(warpPerspective(pv, ch, cw), newImg);
     return newImg;
   }
 
@@ -212,7 +216,7 @@ class imgProcess {
   }
 
   ArrayList<PVector> realign( Contour c ){
-    
+    if (c.numPoints()==4) {    
     ArrayList<PVector> points;
     
     points = c.getPolygonApproximation().getPoints();
@@ -223,6 +227,9 @@ class imgProcess {
       points.add(3,temp);
     }
     return points;
+    } else { 
+      return null;
+    }
   }
 
   Mat getPerspectiveTransformation(ArrayList<PVector> inputPoints, int w, int h) {

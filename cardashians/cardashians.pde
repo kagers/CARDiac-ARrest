@@ -35,19 +35,19 @@ void draw(){
     imageMode(NORMAL);
     image(cam,0,0);
     ip.outlineCards();
-    try{
-      Beret=ip.getBenters();
-      //for (PVector p:Beret) {
-      //fill(255,0,0);
-      // ellipse(p.x,p.y,10,10);
-      //}
-      s1.xCor=(int)Beret.get(0).x;
-      s1.yCor=(int)Beret.get(0).y;
-      s1.display();
-      s2.xCor=(int)Beret.get(1).x;
-      s2.yCor=(int)Beret.get(1).y;
-      s2.display();
-    } catch(NullPointerException e){}
+    // try{
+    //   Beret=ip.getBenters();
+    //   //for (PVector p:Beret) {
+    //   //fill(255,0,0);
+    //   // ellipse(p.x,p.y,10,10);
+    //   //}
+    //   s1.xCor=(int)Beret.get(0).x;
+    //   s1.yCor=(int)Beret.get(0).y;
+    //   s1.display();
+    //   s2.xCor=(int)Beret.get(1).x;
+    //   s2.yCor=(int)Beret.get(1).y;
+    //   s2.display();
+    // } catch(NullPointerException e){}
     try{
       image(Parray.get(n),790,0);
     } catch(IndexOutOfBoundsException e){
@@ -64,7 +64,7 @@ void draw(){
   }
   fill(0);
   textSize(36);
-  println("ay");
+  //println("ay");
   text("P1 has " + p1.cardCount + " cards", width/12,height-400);
   text("P2 has " + p2.cardCount + " cards", width-400, height-400);
   //s = new Sprite(100,100,"../pics/frames/frame",5);
@@ -98,8 +98,10 @@ void keyPressed(){
       p2.wonHand();
       println("p2 won hand");
     } else {
-      //war
+      p1.war();
+      p2.war();
     }
+
     fill(255);
     rect(0,cam.height,width,height-cam.height);
     println("outside");
