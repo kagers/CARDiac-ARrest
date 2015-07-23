@@ -20,26 +20,34 @@ void setup(){
   p1=new Player();
   p2=new Player();
   noStroke();
+  s1=new Sprite(0,0,"../pics/sprites/frame",5);
 }
 
 void draw(){
     if(cam.available()){
       cam.read();
-    }
-    try {
+
       opencv = new OpenCV(this,cam);
       ip = new imgProcess(opencv,2);
       Parray = ip.unwarpCards();
+      imageMode(NORMAL);
       image(cam,0,0);
       ip.outlineCards();
       Beret=ip.getBenters();
-      for (PVector p:Beret) {
-        fill(255,0,0);
-          ellipse(p.x,p.y,10,10);
-          /*s=new Sprite((int)p.x,(int)p.y,"../pics/frames/frame",5);
-            s.display();*/
-      }
-    } catch (Exception e) {}
+      //for (PVector p:Beret) {
+      //fill(255,0,0);
+        // ellipse(p.x,p.y,10,10);
+          //}
+      try{
+      s1.xCor=(int)Beret.get(0).x;
+      s1.yCor=(int)Beret.get(0).y;
+      s1.display();
+      s2.xCor=(int)Beret.get(1).x;
+      s2.xCor=(int)Beret.get(1).y;
+      s2.display();
+      } catch(NullPointerException e){}
+    }
+ 
     
     if(p1.isWinner()){
       noLoop();
@@ -48,7 +56,6 @@ void draw(){
       noLoop();
       text("p2 Congragulations collect your prize at the front desk!",100,100);
     }
-    
     fill(0);
     textSize(36);
     println("ay");
@@ -67,31 +74,31 @@ void keyPressed(){
   }
   if (keyCode == ENTER){
     //try {
-      int ind1=ip.minDif(Parray.get(0));
-      s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
-      s1.display();
-      p1card=new Card(ind1);
-      println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
-      int ind2=ip.minDif(Parray.get(1));
-      s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
-      s2.display();
-      p2card=new Card(ind2);
-      println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
-      if(p1card.compareTo(p2card) > 0){
-        p1.wonHand();
-        p2.lostHand();
-        println("p1 won hand");
-      } else if (p1card.compareTo(p2card) < 0){
-        p1.lostHand();
-        p2.wonHand();
-        println("p2 won hand");
-      } else {
-        //war
-      }
-      fill(255);
-      rect(0,cam.height,width,height-cam.height);
-      println("outside");
-      //} catch (NullPointerException e){}
+      // int ind1=ip.minDif(Parray.get(0));
+  //     s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
+  //     s1.display();
+  //     p1card=new Card(ind1);
+  //     println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
+  //     int ind2=ip.minDif(Parray.get(1));
+  //     s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
+  //     s2.display();
+  //     p2card=new Card(ind2);
+  //     println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
+  //     if(p1card.compareTo(p2card) > 0){
+  //       p1.wonHand();
+  //       p2.lostHand();
+  //       println("p1 won hand");
+  //     } else if (p1card.compareTo(p2card) < 0){
+  //       p1.lostHand();
+  //       p2.wonHand();
+  //       println("p2 won hand");
+  //     } else {
+  //       //war
+  //     }
+  //     fill(255);
+  //     rect(0,cam.height,width,height-cam.height);
+  //     println("outside");
+  //     //} catch (NullPointerException e){}
   }
 }
 

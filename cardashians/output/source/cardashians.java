@@ -41,26 +41,34 @@ public void setup(){
   p1=new Player();
   p2=new Player();
   noStroke();
+  s1=new Sprite(0,0,"../pics/sprites/frame",5);
 }
 
 public void draw(){
     if(cam.available()){
       cam.read();
-    }
-    try {
+
       opencv = new OpenCV(this,cam);
       ip = new imgProcess(opencv,2);
       Parray = ip.unwarpCards();
+      imageMode(NORMAL);
       image(cam,0,0);
       ip.outlineCards();
       Beret=ip.getBenters();
-      for (PVector p:Beret) {
-        fill(255,0,0);
-          ellipse(p.x,p.y,10,10);
-          /*s=new Sprite((int)p.x,(int)p.y,"../pics/frames/frame",5);
-            s.display();*/
-      }
-    } catch (Exception e) {}
+      //for (PVector p:Beret) {
+      //fill(255,0,0);
+        // ellipse(p.x,p.y,10,10);
+          //}
+      try{
+      s1.xCor=(int)Beret.get(0).x;
+      s1.yCor=(int)Beret.get(0).y;
+      s1.display();
+      s2.xCor=(int)Beret.get(1).x;
+      s2.xCor=(int)Beret.get(1).y;
+      s2.display();
+      } catch(NullPointerException e){}
+    }
+ 
     
     if(p1.isWinner()){
       noLoop();
@@ -69,7 +77,6 @@ public void draw(){
       noLoop();
       text("p2 Congragulations collect your prize at the front desk!",100,100);
     }
-    
     fill(0);
     textSize(36);
     println("ay");
@@ -88,31 +95,31 @@ public void keyPressed(){
   }
   if (keyCode == ENTER){
     //try {
-      int ind1=ip.minDif(Parray.get(0));
-      s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
-      s1.display();
-      p1card=new Card(ind1);
-      println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
-      int ind2=ip.minDif(Parray.get(1));
-      s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
-      s2.display();
-      p2card=new Card(ind2);
-      println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
-      if(p1card.compareTo(p2card) > 0){
-        p1.wonHand();
-        p2.lostHand();
-        println("p1 won hand");
-      } else if (p1card.compareTo(p2card) < 0){
-        p1.lostHand();
-        p2.wonHand();
-        println("p2 won hand");
-      } else {
-        //war
-      }
-      fill(255);
-      rect(0,cam.height,width,height-cam.height);
-      println("outside");
-      //} catch (NullPointerException e){}
+      // int ind1=ip.minDif(Parray.get(0));
+  //     s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
+  //     s1.display();
+  //     p1card=new Card(ind1);
+  //     println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
+  //     int ind2=ip.minDif(Parray.get(1));
+  //     s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
+  //     s2.display();
+  //     p2card=new Card(ind2);
+  //     println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
+  //     if(p1card.compareTo(p2card) > 0){
+  //       p1.wonHand();
+  //       p2.lostHand();
+  //       println("p1 won hand");
+  //     } else if (p1card.compareTo(p2card) < 0){
+  //       p1.lostHand();
+  //       p2.wonHand();
+  //       println("p2 won hand");
+  //     } else {
+  //       //war
+  //     }
+  //     fill(255);
+  //     rect(0,cam.height,width,height-cam.height);
+  //     println("outside");
+  //     //} catch (NullPointerException e){}
   }
 }
 
@@ -216,40 +223,39 @@ class Sprite {
   ArrayList<PImage> frames;
   int[] delay = new int[5];
   int frame;
-  String path;
+  String prefix;
+  
 
-  Sprite( int x, int y, int index, int n ) {
-
+  Sprite( int x, int y, String pre, int n ) {
+    
     xCor = x;
     yCor = y;
-
-    path = "../pics/sprites/frame"+index+".png";
+    
+    prefix = pre;
     numFrames = 0;
     frames = new ArrayList<PImage>();
-    delay[0] = 30;
-    delay[1] = 12;
-    delay[2] = 6;
-    delay[3] = 6;
-    delay[4] = 6;
+    delay[0] = 3;
+    delay[1] = 2;
+    delay[2] = 1;
+    delay[3] = 1;
+    delay[4] = 1;
     for ( int i = 0; i < n; i++ ) {
       for ( int j = 0; j < delay[i]; j++ ) {
-        frames.add(loadImage(path));
+        frames.add(loadImage( prefix + i + ".png" ));
         //println("k");
         numFrames++;
       }
     }
-    display();
   }
 
   public void display() {
-    try { 
-      frame = (frame+1) % numFrames;
-      imageMode(CENTER);
-      image( frames.get(frame), xCor, yCor );
-    } 
-    catch (ArithmeticException e) {
-      //println((frame+1), numFrames);
-    }
+    
+    
+    frame = (frame+1) % numFrames;
+     imageMode(CENTER);
+    image( frames.get(frame), xCor, yCor );
+    
+
   }
 }
 
