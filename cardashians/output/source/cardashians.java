@@ -30,6 +30,7 @@ OpenCV opencv;
 PImage img;
 Card p1card,p2card;
 Player p1,p2;
+Sprite s1,s2;
 
 public void setup(){
   int width = 1000;
@@ -55,7 +56,9 @@ public void draw(){
       Beret=ip.getBenters();
       for (PVector p:Beret) {
         fill(255,0,0);
-        ellipse(p.x,p.y,10,10);
+          ellipse(p.x,p.y,10,10);
+          /*s=new Sprite((int)p.x,(int)p.y,"../pics/frames/frame",5);
+            s.display();*/
       }
     } catch (Exception e) {}
     
@@ -66,13 +69,13 @@ public void draw(){
       noLoop();
       text("p2 Congragulations collect your prize at the front desk!",100,100);
     }
-
+    
     fill(0);
     textSize(36);
     println("ay");
     text("P1 has " + p1.cardCount + " cards", width/12,height-100);
     text("P2 has " + p2.cardCount + " cards", width-400, height-100);
-
+    //s = new Sprite(100,100,"../pics/frames/frame",5);
 }
 
 public void keyPressed(){
@@ -84,21 +87,16 @@ public void keyPressed(){
     }
   }
   if (keyCode == ENTER){
-    /*int picNum=ip.minDif(Parray.get(n)); 
-      textSize(72);
-      fill(255);
-      stroke(0);
-      text(numToCard(picNum),300,750);
-      PVector center=ip.findBenter(ip.cards.get(0));
-      fill(255,0,0);
-      if (center!=null) {
-      ellipse(center.x,center.y,10,10);
-    */
-
-    //try{
-      p1card=new Card(ip.minDif(Parray.get(0)));
+    //try {
+      int ind1=ip.minDif(Parray.get(0));
+      s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
+      s1.display();
+      p1card=new Card(ind1);
       println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
-      p2card=new Card(ip.minDif(Parray.get(1)));
+      int ind2=ip.minDif(Parray.get(1));
+      s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
+      s2.display();
+      p2card=new Card(ind2);
       println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
       if(p1card.compareTo(p2card) > 0){
         p1.wonHand();
@@ -116,7 +114,6 @@ public void keyPressed(){
       println("outside");
       //} catch (NullPointerException e){}
   }
-
 }
 
 
@@ -153,14 +150,14 @@ class Card {
     suit=s;
     value=v;
     int pindex=(4*v)+s;
-    String filename="../pics/c"+pindex+".png";
+    String filename="../pics/cards/c"+pindex+".png";
     photo=loadImage(filename);
   }
 
   Card (int p) {
     suit=p%4;
     value=(p/4);
-    String filename="../pics/c"+p+".png";
+    String filename="../pics/cards/c"+p+".png";
     photo=loadImage(filename);
   }
   
@@ -212,6 +209,50 @@ class Player {
   }
 
 }
+class Sprite {
+
+  int numFrames;
+  int xCor, yCor;
+  ArrayList<PImage> frames;
+  int[] delay = new int[5];
+  int frame;
+  String path;
+
+  Sprite( int x, int y, int index, int n ) {
+
+    xCor = x;
+    yCor = y;
+
+    path = "../pics/sprites/frame"+index+".png";
+    numFrames = 0;
+    frames = new ArrayList<PImage>();
+    delay[0] = 30;
+    delay[1] = 12;
+    delay[2] = 6;
+    delay[3] = 6;
+    delay[4] = 6;
+    for ( int i = 0; i < n; i++ ) {
+      for ( int j = 0; j < delay[i]; j++ ) {
+        frames.add(loadImage(path));
+        //println("k");
+        numFrames++;
+      }
+    }
+    display();
+  }
+
+  public void display() {
+    try { 
+      frame = (frame+1) % numFrames;
+      imageMode(CENTER);
+      image( frames.get(frame), xCor, yCor );
+    } 
+    catch (ArithmeticException e) {
+      //println((frame+1), numFrames);
+    }
+  }
+}
+
 
 
 
@@ -320,13 +361,13 @@ class imgProcess {
     if (c.numPoints()==4) {
       //gets points of the contour of a card
       ArrayList<PVector> points = c.getPoints();
-      for (PVector p: points){
+      for (PVector p : points) {
         p.z=1.0f;
       }
 
       //initialize array of all distances from first point??
       ArrayList<Float> dists = new ArrayList<Float>();
-      for (int i=0; i<points.size(); i++) {
+      for (int i=0; i<points.size (); i++) {
         dists.add(points.get(0).dist(points.get(i)));
       }
 
@@ -361,7 +402,7 @@ class imgProcess {
       //finds intersection of the two diagonals
       PVector intersex = l1.cross(l2);
 
-      PVector result=new PVector(intersex.x/intersex.z,intersex.y/intersex.z);
+      PVector result=new PVector(intersex.x/intersex.z, intersex.y/intersex.z);
 
       return result;
     } else {
@@ -373,12 +414,11 @@ class imgProcess {
     ArrayList<PVector> result=new ArrayList<PVector>();
     PVector max=findBenter(cards.get(0));
     result.add(max);
-    for (int i=0;i<cards.size();i++) {
-     
+    for (int i=0; i<cards.size (); i++) {
       if (findBenter(cards.get(i)).x<max.x) {
         PVector tmp=findBenter(cards.get(i));
-        result.set(0,tmp);
-        result.set(1,max);
+        result.set(0, tmp);
+        result.set(1, max);
       } else {
         result.add(findBenter(cards.get(i)));
       }
@@ -398,8 +438,8 @@ class imgProcess {
     cards=tmp;
     return cards;
   }  
-  
-  
+
+
   /* ----------------------Warp Persepective Methods-----------------------------*/
 
   /*
@@ -464,9 +504,9 @@ class imgProcess {
     return endMarker;
   }
 
-  
 
-  
+
+
   /*-------------------------COMPARING------------------*/
 
 
@@ -488,17 +528,17 @@ class imgProcess {
       ret += cc[i];
     }
     /*loadPixels();
-    for (int i=0; i<aa.length; i++) {
-      pixels[i] = color((int)cc[i]);
-    }
-    updatePixels();*/
+     for (int i=0; i<aa.length; i++) {
+     pixels[i] = color((int)cc[i]);
+     }
+     updatePixels();*/
     return ret;
   }
 
   public int minDif(PImage a) {
     ArrayList<PImage> L=new ArrayList<PImage>();
     for (int i=0; i<36; i++) {
-      PImage newCard=loadImage("../pics/c"+i+".png");
+      PImage newCard=loadImage("../pics/cards/c"+i+".png");
       L.add(newCard);
     }
     long dif = absDif(a, L.get(0), true);

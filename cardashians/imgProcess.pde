@@ -159,13 +159,7 @@ class imgProcess {
     ArrayList<PVector> result=new ArrayList<PVector>();
     PVector max=findBenter(cards.get(0));
     result.add(max);
-<<<<<<< HEAD
-    for (int i=0;i<cards.size();i++) {
-     
-=======
     for (int i=0; i<cards.size (); i++) {
-      println(i);
->>>>>>> a9126fea59a97e4cef11d1276bae0691053249a1
       if (findBenter(cards.get(i)).x<max.x) {
         PVector tmp=findBenter(cards.get(i));
         result.set(0, tmp);
@@ -289,7 +283,7 @@ class imgProcess {
   int minDif(PImage a) {
     ArrayList<PImage> L=new ArrayList<PImage>();
     for (int i=0; i<36; i++) {
-      PImage newCard=loadImage("../pics/c"+i+".png");
+      PImage newCard=loadImage("../pics/cards/c"+i+".png");
       L.add(newCard);
     }
     long dif = absDif(a, L.get(0), true);

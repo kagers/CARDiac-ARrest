@@ -9,7 +9,7 @@ OpenCV opencv;
 PImage img;
 Card p1card,p2card;
 Player p1,p2;
-Sprite s;
+Sprite s1,s2;
 
 void setup(){
   int width = 1000;
@@ -35,7 +35,9 @@ void draw(){
       Beret=ip.getBenters();
       for (PVector p:Beret) {
         fill(255,0,0);
-        ellipse(p.x,p.y,10,10);
+          ellipse(p.x,p.y,10,10);
+          /*s=new Sprite((int)p.x,(int)p.y,"../pics/frames/frame",5);
+            s.display();*/
       }
     } catch (Exception e) {}
     
@@ -55,40 +57,6 @@ void draw(){
     //s = new Sprite(100,100,"../pics/frames/frame",5);
 }
 
-void draw(){
-  background(255);
-  //try {
-    /*if(cam.available()){
-      cam.read();
-    }
-    //PImage lectanger=loadImage("v7CDE.png");
-    //image(lectanger,0,0);
-    opencv = new OpenCV(this,cam);
-    //opencv=new OpenCV(this,lectanger);
-    ip = new imgProcess(opencv,2); 
-    //Parray = ip.unwarpCards();
-    //image(ip.threshed,0,0); //depicts image in black'n'white
-    image(cam,0,0);
-    ip.outlineCards();
-    Carray=ip.getBenters();
-    for (PVector p:Carray) {
-      fill(255,0,0);
-      ellipse(p.x,p.y,10,10);
-    }*/
-    /*
-    //try{
-      p1card=new Card(ip.minDif(Parray.get(0)));
-      //p2card=new Card(ip.minDif(Parray.get(1)));
->>>>>>> a9126fea59a97e4cef11d1276bae0691053249a1
-
-    fill(0);
-    textSize(36);
-    println("ay");
-    text("P1 has " + p1.cardCount + " cards", width/12,height-100);
-    text("P2 has " + p2.cardCount + " cards", width-400, height-100);
-
-    }*/
-
 void keyPressed(){
   if(key==CODED){
     if (keyCode==RIGHT) {
@@ -98,21 +66,16 @@ void keyPressed(){
     }
   }
   if (keyCode == ENTER){
-    /*int picNum=ip.minDif(Parray.get(n)); 
-      textSize(72);
-      fill(255);
-      stroke(0);
-      text(numToCard(picNum),300,750);
-      PVector center=ip.findBenter(ip.cards.get(0));
-      fill(255,0,0);
-      if (center!=null) {
-      ellipse(center.x,center.y,10,10);
-    */
-
-    //try{
-      p1card=new Card(ip.minDif(Parray.get(0)));
+    //try {
+      int ind1=ip.minDif(Parray.get(0));
+      s1=new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,0,5);
+      s1.display();
+      p1card=new Card(ind1);
       println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
-      p2card=new Card(ip.minDif(Parray.get(1)));
+      int ind2=ip.minDif(Parray.get(1));
+      s2=new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,1,5);
+      s2.display();
+      p2card=new Card(ind2);
       println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
       if(p1card.compareTo(p2card) > 0){
         p1.wonHand();
@@ -130,7 +93,6 @@ void keyPressed(){
       println("outside");
       //} catch (NullPointerException e){}
   }
-
 }
 
 

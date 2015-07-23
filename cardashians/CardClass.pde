@@ -14,14 +14,14 @@ class Card {
     suit=s;
     value=v;
     int pindex=(4*v)+s;
-    String filename="../pics/c"+pindex+".png";
+    String filename="../pics/cards/c"+pindex+".png";
     photo=loadImage(filename);
   }
 
   Card (int p) {
     suit=p%4;
     value=(p/4);
-    String filename="../pics/c"+p+".png";
+    String filename="../pics/cards/c"+p+".png";
     photo=loadImage(filename);
   }
   
