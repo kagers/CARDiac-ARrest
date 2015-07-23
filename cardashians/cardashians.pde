@@ -11,6 +11,7 @@ Player p1,p2;
 Sprite s1,s2;
 int n=0;
 PImage cardTest;
+boolean intro;
 
 void setup(){
   int width = 1000;
@@ -18,6 +19,7 @@ void setup(){
   size(width,height);
   cam = new Capture(this);
   cam.start();
+  intro = true;
   p1=new Player();
   p2=new Player();
   noStroke();
@@ -26,48 +28,55 @@ void setup(){
 }
 
 void draw(){
-  if(cam.available()){
-    cam.read();
+  if(intro){
+    //stuff happens
+    intro=false;
+  } else {
 
-    opencv = new OpenCV(this,cam);
-    ip = new imgProcess(opencv,2);
-    Parray = ip.unwarpCards();
-    imageMode(NORMAL);
-    image(cam,0,0);
-    ip.outlineCards();
-    // try{
-    //   Beret=ip.getBenters();
-    //   //for (PVector p:Beret) {
-    //   //fill(255,0,0);
-    //   // ellipse(p.x,p.y,10,10);
-    //   //}
-    //   s1.xCor=(int)Beret.get(0).x;
-    //   s1.yCor=(int)Beret.get(0).y;
-    //   s1.display();
-    //   s2.xCor=(int)Beret.get(1).x;
-    //   s2.yCor=(int)Beret.get(1).y;
-    //   s2.display();
-    // } catch(NullPointerException e){}
-    try{
-      image(Parray.get(n),790,0);
-    } catch(IndexOutOfBoundsException e){
+    if(cam.available()){
+      cam.read();
+
+      opencv = new OpenCV(this,cam);
+      ip = new imgProcess(opencv,2);
+      Parray = ip.unwarpCards();
+      imageMode(NORMAL);
+      image(cam,0,0);
+      ip.outlineCards();
+      try{
+        Beret=ip.getBenters();
+        //for (PVector p:Beret) {
+        //fill(255,0,0);
+        // ellipse(p.x,p.y,10,10);
+        //}
+        s1.xCor=(int)Beret.get(0).x;
+        s1.yCor=(int)Beret.get(0).y;
+        s1.display();
+        s2.xCor=(int)Beret.get(1).x;
+        s2.yCor=(int)Beret.get(1).y;
+        s2.display();
+      } catch(NullPointerException e){}
+      try{
+        image(Parray.get(n),790,0);
+      } catch(IndexOutOfBoundsException e){
+      }
     }
-  }
  
     
-  if(p1.isWinner()){
-    noLoop();
-    text("p1 winnerp1  winner chp1icken dinner",100,100);
-  } else if (p2.isWinner()){
-    noLoop();
-    text("p2 Congragulations collect your prize at the front desk!",100,100);
+    if(p1.isWinner()){
+      noLoop();
+      text("p1 winnerp1  winner chp1icken dinner",100,100);
+    } else if (p2.isWinner()){
+      noLoop();
+      text("p2 Congragulations collect your prize at the front desk!",100,100);
+    }
+    fill(0);
+    textSize(36);
+    //println("ay");
+    text("P1 has " + p1.cardCount + " cards", width/12,height-400);
+    text("P2 has " + p2.cardCount + " cards", width-400, height-400);
+    //s = new Sprite(100,100,"../pics/frames/frame",5);
+
   }
-  fill(0);
-  textSize(36);
-  //println("ay");
-  text("P1 has " + p1.cardCount + " cards", width/12,height-400);
-  text("P2 has " + p2.cardCount + " cards", width-400, height-400);
-  //s = new Sprite(100,100,"../pics/frames/frame",5);
 }
 
 void keyPressed(){
