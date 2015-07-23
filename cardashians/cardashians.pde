@@ -9,6 +9,7 @@ OpenCV opencv;
 PImage img;
 Card p1card,p2card;
 Player p1,p2;
+Sprite s;
 
 void setup(){
   int width = 1000;
@@ -45,6 +46,40 @@ void draw(){
       noLoop();
       text("p2 Congragulations collect your prize at the front desk!",100,100);
     }
+    
+    fill(0);
+    textSize(36);
+    println("ay");
+    text("P1 has " + p1.cardCount + " cards", width/12,height-100);
+    text("P2 has " + p2.cardCount + " cards", width-400, height-100);
+    //s = new Sprite(100,100,"../pics/frames/frame",5);
+}
+
+void draw(){
+  background(255);
+  //try {
+    /*if(cam.available()){
+      cam.read();
+    }
+    //PImage lectanger=loadImage("v7CDE.png");
+    //image(lectanger,0,0);
+    opencv = new OpenCV(this,cam);
+    //opencv=new OpenCV(this,lectanger);
+    ip = new imgProcess(opencv,2); 
+    //Parray = ip.unwarpCards();
+    //image(ip.threshed,0,0); //depicts image in black'n'white
+    image(cam,0,0);
+    ip.outlineCards();
+    Carray=ip.getBenters();
+    for (PVector p:Carray) {
+      fill(255,0,0);
+      ellipse(p.x,p.y,10,10);
+    }*/
+    /*
+    //try{
+      p1card=new Card(ip.minDif(Parray.get(0)));
+      //p2card=new Card(ip.minDif(Parray.get(1)));
+>>>>>>> a9126fea59a97e4cef11d1276bae0691053249a1
 
     fill(0);
     textSize(36);
@@ -52,7 +87,7 @@ void draw(){
     text("P1 has " + p1.cardCount + " cards", width/12,height-100);
     text("P2 has " + p2.cardCount + " cards", width-400, height-100);
 
-}
+    }*/
 
 void keyPressed(){
   if(key==CODED){

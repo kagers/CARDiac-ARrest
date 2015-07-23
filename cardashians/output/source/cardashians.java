@@ -23,7 +23,8 @@ public class cardashians extends PApplet {
 
 imgProcess ip;
 Capture cam;
-ArrayList<PVector> Carray;
+ArrayList<PVector> Beret;
+ArrayList<PImage> Parray;
 int n=0;
 OpenCV opencv;
 PImage img;
@@ -36,41 +37,42 @@ public void setup(){
   size(width,height);
   cam = new Capture(this);
   cam.start();
-  
+  p1=new Player();
+  p2=new Player();
+  noStroke();
 }
 
 public void draw(){
-  //try {
     if(cam.available()){
       cam.read();
     }
-    //PImage lectanger=loadImage("v7CDE.png");
-    //image(lectanger,0,0);
-    opencv = new OpenCV(this,cam);
-    //opencv=new OpenCV(this,lectanger);
-    ip = new imgProcess(opencv,2); 
-    //Parray = ip.unwarpCards();
-    //image(ip.threshed,0,0); //depicts image in black'n'white
-    image(cam,0,0);
-    ip.outlineCards();
-    Carray=ip.getBenters();
-    for (PVector p:Carray) {
-      fill(255,0,0);
-      ellipse(p.x,p.y,10,10);
+    try {
+      opencv = new OpenCV(this,cam);
+      ip = new imgProcess(opencv,2);
+      Parray = ip.unwarpCards();
+      image(cam,0,0);
+      ip.outlineCards();
+      Beret=ip.getBenters();
+      for (PVector p:Beret) {
+        fill(255,0,0);
+        ellipse(p.x,p.y,10,10);
+      }
+    } catch (Exception e) {}
+    
+    if(p1.isWinner()){
+      noLoop();
+      text("p1 winnerp1  winner chp1icken dinner",100,100);
+    } else if (p2.isWinner()){
+      noLoop();
+      text("p2 Congragulations collect your prize at the front desk!",100,100);
     }
-    /*
-    //try{
-      p1card=new Card(ip.minDif(Parray.get(0)));
-      //p2card=new Card(ip.minDif(Parray.get(1)));
 
-      PVector center = ip.findBenter(ip.cards.get(0));
-      
-      fill(255,0,0);
-      ellipse(center.x,center.y,10,10);
-      //image(Parray.get(n),790,0);
-      
-      //} catch(IndexOutOfBoundsException e){}*/
-    //} catch (Exception e) {}
+    fill(0);
+    textSize(36);
+    println("ay");
+    text("P1 has " + p1.cardCount + " cards", width/12,height-100);
+    text("P2 has " + p2.cardCount + " cards", width-400, height-100);
+
 }
 
 public void keyPressed(){
@@ -83,17 +85,40 @@ public void keyPressed(){
   }
   if (keyCode == ENTER){
     /*int picNum=ip.minDif(Parray.get(n)); 
-    textSize(72);
-    fill(255);
-    stroke(0);
-    text(numToCard(picNum),300,750);*/
-    PVector center=ip.findBenter(ip.cards.get(0));
-    fill(255,0,0);
-    if (center!=null) {
-    ellipse(center.x,center.y,10,10);
-    }
+      textSize(72);
+      fill(255);
+      stroke(0);
+      text(numToCard(picNum),300,750);
+      PVector center=ip.findBenter(ip.cards.get(0));
+      fill(255,0,0);
+      if (center!=null) {
+      ellipse(center.x,center.y,10,10);
+    */
+
+    //try{
+      p1card=new Card(ip.minDif(Parray.get(0)));
+      println("p1 card:"+numToCard(ip.minDif(Parray.get(0))));
+      p2card=new Card(ip.minDif(Parray.get(1)));
+      println("P2 card:"+numToCard(ip.minDif(Parray.get(1))));
+      if(p1card.compareTo(p2card) > 0){
+        p1.wonHand();
+        p2.lostHand();
+        println("p1 won hand");
+      } else if (p1card.compareTo(p2card) < 0){
+        p1.lostHand();
+        p2.wonHand();
+        println("p2 won hand");
+      } else {
+        //war
+      }
+      fill(255);
+      rect(0,cam.height,width,height-cam.height);
+      println("outside");
+      //} catch (NullPointerException e){}
   }
+
 }
+
 
 public String numToCard(int picNum) {
   int s=picNum%4;
@@ -109,7 +134,9 @@ public String numToCard(int picNum) {
   return face+" of "+suit;
 }
     
-
+/*int war() {
+  //int c=new Card(ip.minDif(Parray.get(0)));
+  }*/
 class Card {
   PImage photo;
   
@@ -347,7 +374,7 @@ class imgProcess {
     PVector max=findBenter(cards.get(0));
     result.add(max);
     for (int i=0;i<cards.size();i++) {
-      println(i);
+     
       if (findBenter(cards.get(i)).x<max.x) {
         PVector tmp=findBenter(cards.get(i));
         result.set(0,tmp);
@@ -460,11 +487,11 @@ class imgProcess {
     for (int i=0; i<aa.length; i++) {
       ret += cc[i];
     }
-    loadPixels();
+    /*loadPixels();
     for (int i=0; i<aa.length; i++) {
       pixels[i] = color((int)cc[i]);
     }
-    updatePixels();
+    updatePixels();*/
     return ret;
   }
 
@@ -482,17 +509,17 @@ class imgProcess {
       if (b<dif) {
         dif=b;
         ret=i;
-        println(i);
+        
       }
       b = absDif(a, L.get(i), false);
       if (b<dif) {
         dif=b;
         ret=i;
-        println(i);
+        
       }
     }
-    println(dif);
-    println(ret);
+   
+    
     return ret;
   }
 }

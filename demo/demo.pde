@@ -25,7 +25,7 @@ void draw(){
     opencv = new OpenCV(this,cam);
     //cardTest=loadImage("../pics/c0.png");
     //opencv=new OpenCV(this,cardTest);
-    ip = new imgProcess(opencv,8); 
+    ip = new imgProcess(opencv,2); 
     Parray = ip.unwarpCards();
     // image(ip.threshed,0,0); //depicts image in black'n'white
     image(cam,0,0);
