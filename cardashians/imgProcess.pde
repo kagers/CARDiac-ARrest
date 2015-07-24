@@ -91,7 +91,7 @@ class imgProcess {
       beginShape();
       strokeWeight(4);
       stroke(0, 255, 0);
-      for (PVector point : c.getPolygonApproximation ().getPoints()) {
+      for (PVector point : realign(c)) {
         vertex(point.x, point.y);
       }
       endShape(CLOSE);
@@ -214,18 +214,58 @@ class imgProcess {
   ArrayList<PImage> unwarpCards() {
     return unwarpCards(cards);
   }
-
+  
+  ArrayList<PVector> fixCorners( ArrayList<PVector> points ){
+    PVector upleft, upright, downleft, downright;
+    upleft = new PVector();
+    upright = new PVector();
+    downleft = new PVector();
+    downright = new PVector();
+    
+    ArrayList<PVector> newPoints = new ArrayList<PVector>();
+    float middleX = (abs( points.get(0).x - points.get(2).x ) / 2) + min( points.get(0).x, points.get(2).x);
+    float middleY = (abs( points.get(0).y - points.get(2).y ) / 2) + min( points.get(0).y, points.get(2).y);
+    for ( int i = 0; i < points.size(); i++ ){
+      PVector temp = points.get(i);
+      if ( temp.x < middleX && temp.y < middleY ){
+        upleft = points.get(i);
+      }
+      else if ( temp.x > middleX && temp.y < middleY ){
+        upright = points.get(i);
+      }
+      else if ( temp.x < middleX && temp.y > middleY ){
+        downleft = points.get(i);
+      }
+      else if ( temp.x > middleX && temp.y > middleY ){
+        downright = points.get(i);
+      }
+    }
+      
+      newPoints.add(upleft);
+      newPoints.add(downleft);
+      newPoints.add(downright);
+      newPoints.add(upright);
+      
+      return newPoints;
+    
+  }
   ArrayList<PVector> realign( Contour c ){
     if (c.numPoints()==4) {    
     ArrayList<PVector> points;
     
     points = c.getPolygonApproximation().getPoints();
     
-    if ( points.get(0).x  < points.get(1).x ){ // if the first point is the left and not right edge
-      PVector temp = points.get(0);
-      points.remove(0);
-      points.add(3,temp);
+
+    
+    if ( points.get(0).x  > points.get(1).x ){ // if the first point is upper right not upper left
+      points = fixCorners(points);
     }
+    
+    fill(255,0,0);
+    ellipse( points.get(0).x, points.get(0).y, 20, 20);
+    fill(0,255,0);
+    ellipse( points.get(1).x, points.get(1).y, 20, 20);
+    
     return points;
     } else { 
       return null;
