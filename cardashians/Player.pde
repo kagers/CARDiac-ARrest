@@ -8,6 +8,7 @@ class Player {
   Player() {
     cardCount=18;
     myCards=new ArrayList<Card>();
+    isWar = false;
   }
 
   void wonHand(){
