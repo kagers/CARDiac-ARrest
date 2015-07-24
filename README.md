@@ -4,7 +4,6 @@
 
 
 ###Things To Do:
-- Fix Perspective thing
 - Finish Sprite frames
 - Figure out sprite file organization
 - Test sprite class with actual cards
