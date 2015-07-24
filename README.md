@@ -4,11 +4,12 @@
 
 
 ###Things To Do:
-- Finish Sprite frames
-- Figure out sprite file organization
-- Test sprite class with actual cards
-- sprite interaction
-- code to handle war
+- Finish Sprite frames ( S: working on it )
+-   dying, royals, color -> numbers
+- Figure out sprite file organization ( S: directories )
+- Test sprite class with actual cards <b>DONE</b>
+- sprite interaction ( S: dying u mean )
+- code to handle war <b>DONE</b>
 - optimize game play
 - optimize code in general
 - intro screen?
