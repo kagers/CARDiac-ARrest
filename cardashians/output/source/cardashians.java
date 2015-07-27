@@ -31,12 +31,12 @@ Player p1, p2;
 Sprite s1, s2;
 int n=0;
 boolean intro;
-PFont fanta,fanta2;
+PFont fanta,fanta2, fanta3;
 PImage hertz,heartz,borda,s,m,d,k,cardTest,img;
 
 public void setup() {
-  int width = 700;
-  int height = 700;
+  int width = 1000;
+  int height = 1000;
   size(width, height);
   cam = new Capture(this);
   cam.start();
@@ -48,16 +48,16 @@ public void setup() {
   s2=new Sprite(0, 0, "../pics/sprites/frame", 5);
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
-  //fanta = loadFont("Courier10PitchBT-Roman-48.vlw");
+  fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
   //fanta=loadFont("URWGothicL-Demi-48");
   hertz = loadImage("hattack.png");
   heartz = loadImage("flip.png");
   borda=loadImage("../pics/intro/border.png");
   borda.resize(width,height);
-  s=loadImage("../pics/intro/s.jpg"); s.resize(125,193);
-  m=loadImage("../pics/intro/m.jpg"); m.resize(125,193);
-  d=loadImage("../pics/intro/d.jpg"); d.resize(125,193);
-  k=loadImage("../pics/intro/k.jpg"); k.resize(125,193);
+  s=loadImage("../pics/intro/s.jpg"); s.resize(180,277);
+  m=loadImage("../pics/intro/m.jpg"); m.resize(180,277);
+  d=loadImage("../pics/intro/d.jpg"); d.resize(180,277);
+  k=loadImage("../pics/intro/k.jpg"); k.resize(180,277);
 }
 
 public void draw() {
@@ -74,19 +74,20 @@ public void draw() {
     //image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
     //image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
     image(borda,0,0);
-    textFont(fanta2);
-    textSize(90);
+    //textFont(fanta2);
+    textFont(fanta3);
+    textSize(150);
     fill(255);
-    text("WAR",width/2, height/2-80);
+    text("WAR",width/2, height/2-140);
     fill(192,192,192);
-    rect(width/2-125,height/2-50,250,60);
+    //rect(width/2-125,height/2-50,250,60);
     textSize(20);
-    fill(0);
-    text("PRESS ENTER TO BEGIN",width/2,height/2-10);
-    image(s,90,height/2+40);
-    image(m,220,height/2+40);
-    image(d,350,height/2+40);
-    image(k,480,height/2+40);
+    fill(255);
+    text("PRESS RIGHT TO BEGIN",width/2,height/2-40);
+    image(s,125,height/2+40);
+    image(m,315,height/2+40);
+    image(d,505,height/2+40);
+    image(k,695,height/2+40);
   } else {
 
     if (cam.available()) {
@@ -94,11 +95,11 @@ public void draw() {
 
       opencv = new OpenCV(this, cam);
       ip = new imgProcess(opencv, 2);
-      Parray = ip.unwarpCards();
       imageMode(NORMAL);
       image(cam, 0, 0);
-      ip.outlineCards();
       try {
+        ip.outlineCards();
+        Parray = ip.unwarpCards();
         Beret=ip.getBenters();
         //for (PVector p:Beret) {
         //fill(255,0,0);
@@ -107,8 +108,8 @@ public void draw() {
         s1.xCor=(int)Beret.get(0).x;
         s1.yCor=(int)Beret.get(0).y;
         s1.display();
-        s2.xCor=(int)Beret.get(1).x;
-        s2.yCor=(int)Beret.get(1).y;
+        s2.xCor=(int)Beret.get(2).x;
+        s2.yCor=(int)Beret.get(2).y;
         s2.display();
       } 
       catch(NullPointerException e) {
@@ -131,8 +132,8 @@ public void draw() {
     fill(0);
     textSize(36);
     //println("ay");
-    text("P1 has " + p1.cardCount + " cards", width/12, height-400);
-    text("P2 has " + p2.cardCount + " cards", width-400, height-400);
+    text("P1 has " + p1.cardCount + " cards", width-800, height-100);
+    text("P2 has " + p2.cardCount + " cards", width-200, height-100);
     //s = new Sprite(100,100,"../pics/frames/frame",5);
   }
 }
@@ -140,7 +141,8 @@ public void draw() {
 public void keyPressed() {
   if (key==CODED) {
     if (keyCode==RIGHT) {
-      intro=!intro;
+      intro=false;
+      background(255);
     } else if (keyCode==LEFT) {
       n--;
     }
@@ -600,10 +602,10 @@ class imgProcess {
       points = fixCorners(points);
     }
     
-    fill(255,0,0);
+    /* fill(255,0,0);
     ellipse( points.get(0).x, points.get(0).y, 20, 20);
     fill(0,255,0);
-    ellipse( points.get(1).x, points.get(1).y, 20, 20);
+    ellipse( points.get(1).x, points.get(1).y, 20, 20);*/
     
     return points;
     } else { 

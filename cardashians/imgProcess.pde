@@ -261,10 +261,10 @@ class imgProcess {
       points = fixCorners(points);
     }
     
-    fill(255,0,0);
+    /* fill(255,0,0);
     ellipse( points.get(0).x, points.get(0).y, 20, 20);
     fill(0,255,0);
-    ellipse( points.get(1).x, points.get(1).y, 20, 20);
+    ellipse( points.get(1).x, points.get(1).y, 20, 20);*/
     
     return points;
     } else { 

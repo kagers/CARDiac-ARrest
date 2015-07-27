@@ -34,14 +34,10 @@ class Sprite {
     
   }
 
-  void display() {
-    
-    
+  void display() {    
     frame = (frame+1) % numFrames;
-     imageMode(CENTER);
+    imageMode(CENTER);
     image( frames.get(frame), xCor, yCor );
-    
-
   }
 
   void loadSequence(int picNum) {
