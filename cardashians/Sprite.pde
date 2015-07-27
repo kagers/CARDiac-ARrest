@@ -10,7 +10,7 @@ class Sprite {
   
 
   Sprite( int x, int y, int n ) {
-    
+    prefix = "../pics/sprites/reggae/";
     xCor = x;
     yCor = y;
     numFrames = 0;
@@ -92,11 +92,11 @@ class Sprite {
   void loadSequence(int picNum) {
     ArrayList<PImage> newFrames=new ArrayList<PImage>();
     numFrames=0;
-    for (int i=0; i<picNum;i++) {
-      for (int j=0;j<delay[i];j++) {
-        newFrames.add(loadImage(prefix+i+".png"));
+    for (int i=0; i<5;i++) {
+      //for (int j=0;j<delay[i];j++) {
+        newFrames.add(loadImage(prefix+picNum+ "/" +i +".png"));
         numFrames++;
-      }
+      //}
     }
     frames=newFrames;
     loadSexplosion(picNum);

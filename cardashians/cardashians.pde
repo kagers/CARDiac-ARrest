@@ -10,9 +10,9 @@ Player p1, p2;
 Sprite s1, s2;
 int n=0;
 boolean intro, hasDrawn;
-PFont fanta,fanta2, fanta3;
-PImage hertz,heartz,borda,s,m,d,k,cardTest,img;
-int preX,preY;
+PFont fanta, fanta2, fanta3;
+PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
+int preX, preY, picNum1, picNum2;
 
 void setup() {
   int width = 800;
@@ -35,11 +35,17 @@ void setup() {
   hertz = loadImage("hattack.png");
   heartz = loadImage("flip.png");
   borda=loadImage("../pics/intro/border.png");
-  borda.resize(width,height);
-  s=loadImage("../pics/intro/s.jpg"); s.resize(180,277);
-  m=loadImage("../pics/intro/m.jpg"); m.resize(180,277);
-  d=loadImage("../pics/intro/d.jpg"); d.resize(180,277);
-  k=loadImage("../pics/intro/k.jpg"); k.resize(180,277);
+  borda.resize(width, height);
+  s=loadImage("../pics/intro/s.jpg"); 
+  s.resize(180, 277);
+  m=loadImage("../pics/intro/m.jpg"); 
+  m.resize(180, 277);
+  d=loadImage("../pics/intro/d.jpg"); 
+  d.resize(180, 277);
+  k=loadImage("../pics/intro/k.jpg"); 
+  k.resize(180, 277);
+  preX=1;
+  preY=1;
 }
 
 void draw() {
@@ -53,7 +59,7 @@ void draw() {
 
       opencv = new OpenCV(this, cam);
       ip = new imgProcess(opencv, 2);
-      
+
       imageMode(NORMAL);
       image(cam, 0, 0);
       try {
@@ -64,22 +70,34 @@ void draw() {
         //fill(255,0,0);
         // ellipse(p.x,p.y,10,10);
         //}
-        int x1 = (int)Beret.get(0).x;
-        int y1 = (int)Beret.get(0).y;
-        if(x1 != preX && y1 != preY){
+        
+        
+        if (picNum1 != preX && picNum2 != preY) {
+           int x1 = (int)Beret.get(0).x;
+           int y1 = (int)Beret.get(0).y;
           s1.xCor= x1;
           s1.yCor= y1;
-        } else if (!hasDrawn){
-          //s1.display();
-          //s2.display();
-         hasDrawn = s1.moveToCenter(width/2,height/2) &&  s2.moveToCenter(width/2,height/2);
-        }  else {
+          picNum1 = ip.minDif(Parray.get(0));
+          picNum2 =  ip.minDif(Parray.get(1));
+          hasDrawn=false;
+          s1.loadSequence(picNum1);
+          s2.loadSequence(picNum2);
+          preX=picNum1;
+          preY = picNum2;
+          println("phase1");
+      } else if (!hasDrawn) {
           
-          s1.display();
-          s2.display();
+          //s2.display();
+          hasDrawn = s1.moveToCenter(width/2, height/2) &&  s2.moveToCenter(width/2, height/2);
+        println("phase2");
+      } else {
+
+          s1.displayAttack();
+          s2.displayExplosion();
           s2.xCor=(int)Beret.get(2).x;
           s2.yCor=(int)Beret.get(2).y;
-      }
+          println("phase3");
+        }
       } 
       catch(NullPointerException e) {
       }
@@ -117,7 +135,7 @@ void keyPressed() {
     }
   }
   if (keyCode == ENTER) {
-    int picNum = ip.minDif(Parray.get(0));
+/*
     println("p1 "+numToCard(picNum));
     int ind1=ip.minDif(Parray.get(0));
     p1card=new Card(ind1);
@@ -141,6 +159,7 @@ void keyPressed() {
     fill(255);
     rect(0, cam.height, width, height-cam.height);
     println("outside");
+  */
   }
 }
 
@@ -164,7 +183,7 @@ String numToCard(int picNum) {
 }
 
 void introSequence() {
-  background(51,102,0);
+  background(51, 102, 0);
   textFont(fanta, 40);
   textAlign(CENTER);
   fill(255);
@@ -174,21 +193,21 @@ void introSequence() {
   }
   //image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
   //image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
-  image(borda,0,0);
+  image(borda, 0, 0);
   //textFont(fanta2);
   textFont(fanta3);
   textSize(150);
   fill(255);
-  text("WAR",width/2, height/2-140);
-  fill(192,192,192);
+  text("WAR", width/2, height/2-140);
+  fill(192, 192, 192);
   //rect(width/2-125,height/2-50,250,60);
   textSize(20);
   fill(255);
-  text("PRESS RIGHT TO BEGIN",width/2,height/2-40);
-  image(s,125,height/2+40);
-  image(m,315,height/2+40);
-  image(d,505,height/2+40);
-  image(k,695,height/2+40);
+  text("PRESS RIGHT TO BEGIN", width/2, height/2-40);
+  image(s, 125, height/2+40);
+  image(m, 315, height/2+40);
+  image(d, 505, height/2+40);
+  image(k, 695, height/2+40);
 }
 /*int war() {
  //int c=new Card(ip.minDif(Parray.get(0)));
