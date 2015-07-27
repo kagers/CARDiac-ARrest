@@ -9,12 +9,10 @@ class Sprite {
   String prefix;
   
 
-  Sprite( int x, int y, String pre, int n ) {
+  Sprite( int x, int y, int n ) {
     
     xCor = x;
     yCor = y;
-    
-    prefix = pre;
     numFrames = 0;
     frames = new ArrayList<PImage>();
     sexFrames=new ArrayList<PImage>();
@@ -23,10 +21,12 @@ class Sprite {
     delay[2] = 1;
     delay[3] = 1;
     delay[4] = 1;
-    for ( int i = 0; i < n; i++ ) {
-      for ( int j = 0; j < delay[i]; j++ ) {
-        frames.add(loadImage( prefix + i + ".png" ));
-        //println("k");
+    String fixed=""+n;
+    if (fixed.length()==1) 
+      fixed="0"+n;
+    for (int i=0;i<5;i++) {
+      for (int j=0;j<delay[i];j++) {
+        frames.add(loadImage("../pics/sprites/reggae/"+fixed+"/"+i+".png"));
         numFrames++;
       }
     }
@@ -50,36 +50,42 @@ class Sprite {
     image(frames.get(0),xCor,yCor);
   }
 
-  void moveToCenter(int cx, int cy) {
-    while (xCor>cx) {
+  boolean moveToCenter(int cx, int cy) {
+    if (xCor==cx && yCor==cy) return true;
+    
+    if (xCor>cx) {
       xCor--;
       image(frames.get(0),xCor,yCor);
     }
-    while (xCor<cx) {
+    if (xCor<cx) {
       xCor++;
       image(frames.get(0),xCor,yCor);
     }
-    while (yCor>cy) {
+    if (yCor>cy) {
       yCor--;
       image(frames.get(0),xCor,yCor);
     }
-    while (yCor<cy) {
+    if (yCor<cy) {
       yCor++;
       image(frames.get(0),xCor,yCor);
     }
+
+    return false;
   }
 
   void displayAttack() {
     imageMode(CENTER);
-    for (int i=0; i<frames.size();i++) {
-      image(frames.get(i),xCor,yCor);
+    if (frame<frames.size()) {
+      image(frames.get(frame),xCor,yCor);
+      frame++;
     }
   }
 
   void displayExplosion() {
     imageMode(CENTER);
-    for (int i=0;i<sexFrames.size();i++) {
-      image(sexFrames.get(i),xCor,yCor);
+    if (sframe<sexFrames.size()) {
+      image(sexFrames.get(sframe),xCor,yCor);
+      sframe++;
     }
   }
       
