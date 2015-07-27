@@ -5,20 +5,17 @@ Capture cam;
 ArrayList<PVector> Beret;
 ArrayList<PImage> Parray;
 OpenCV opencv;
-PImage img;
 Card p1card, p2card;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-PImage cardTest;
 boolean intro;
-PFont fanta;
-PImage hertz;
-PImage heartz; 
+PFont fanta,fanta2;
+PImage hertz,heartz,borda,s,m,d,k,cardTest,img;
 
 void setup() {
-  int width = 500;
-  int height = 500;
+  int width = 700;
+  int height = 700;
   size(width, height);
   cam = new Capture(this);
   cam.start();
@@ -29,26 +26,46 @@ void setup() {
   s1=new Sprite(0, 0, "../pics/sprites/frame", 5);
   s2=new Sprite(0, 0, "../pics/sprites/frame", 5);
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
+  fanta2 = loadFont("FreeSans-48.vlw");
   //fanta = loadFont("Courier10PitchBT-Roman-48.vlw");
-  //fanta = loadFont("FreeSans-48.vlw");
+  //fanta=loadFont("URWGothicL-Demi-48");
   hertz = loadImage("hattack.png");
   heartz = loadImage("flip.png");
+  borda=loadImage("../pics/intro/border.png");
+  borda.resize(width,height);
+  s=loadImage("../pics/intro/s.jpg"); s.resize(125,193);
+  m=loadImage("../pics/intro/m.jpg"); m.resize(125,193);
+  d=loadImage("../pics/intro/d.jpg"); d.resize(125,193);
+  k=loadImage("../pics/intro/k.jpg"); k.resize(125,193);
 }
 
 void draw() {
   if (intro) {
     //stuff happens
-    background(0);
+    background(51,102,0);
     textFont(fanta, 40);
     textAlign(CENTER);
+    fill(255);
     text("Team CARDiac ARrest\nPresents", width/2, height/6);
     if (mousePressed) {
       intro=false;
     }
-    image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
-    image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
-    textSize(50);
-    text("WAR",width/2, height/2);
+    //image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
+    //image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
+    image(borda,0,0);
+    textFont(fanta2);
+    textSize(90);
+    fill(255);
+    text("WAR",width/2, height/2-80);
+    fill(192,192,192);
+    rect(width/2-125,height/2-50,250,60);
+    textSize(20);
+    fill(0);
+    text("PRESS ENTER TO BEGIN",width/2,height/2-10);
+    image(s,90,height/2+40);
+    image(m,220,height/2+40);
+    image(d,350,height/2+40);
+    image(k,480,height/2+40);
   } else {
 
     if (cam.available()) {
@@ -78,7 +95,7 @@ void draw() {
       try {
         image(Parray.get(n), 790, 0);
       } 
-      catch(IndexOutOfBoundsException e) {
+      catch(Exception e) {
       }
     }
 
@@ -102,7 +119,7 @@ void draw() {
 void keyPressed() {
   if (key==CODED) {
     if (keyCode==RIGHT) {
-      n++;
+      intro=!intro;
     } else if (keyCode==LEFT) {
       n--;
     }
