@@ -12,19 +12,22 @@ int n=0;
 boolean intro, hasDrawn;
 PFont fanta,fanta2, fanta3;
 PImage hertz,heartz,borda,s,m,d,k,cardTest,img;
+int preX,preY;
 
 void setup() {
-  int width = 1000;
-  int height = 1000;
+  int width = 800;
+  int height = 800;
   size(width, height);
   cam = new Capture(this);
   cam.start();
   intro = true;
+  //hasCenter=false;
   hasDrawn=false;
   p1=new Player();
   p2=new Player();
   noStroke();
- 
+  s1=new Sprite(0, 0, 3);
+  s2=new Sprite(0, 0, 3);
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
@@ -50,6 +53,7 @@ void draw() {
 
       opencv = new OpenCV(this, cam);
       ip = new imgProcess(opencv, 2);
+      
       imageMode(NORMAL);
       image(cam, 0, 0);
       try {
@@ -60,20 +64,22 @@ void draw() {
         //fill(255,0,0);
         // ellipse(p.x,p.y,10,10);
         //}
-        s1.xCor=(int)Beret.get(0).x;
-        s1.yCor=(int)Beret.get(0).y;
-        if (!hasDrawn){
+        int x1 = (int)Beret.get(0).x;
+        int y1 = (int)Beret.get(0).y;
+        if(x1 != preX && y1 != preY){
+          s1.xCor= x1;
+          s1.yCor= y1;
+        } else if (!hasDrawn){
           //s1.display();
           //s2.display();
-          s1.moveToCenter(width/2,height/2);
-          s2.moveToCenter(width/2,height/2);
-          hasDrawn=true;
-        }
-        s1.display();
-        s2.display();
-        s2.xCor=(int)Beret.get(2).x;
-        s2.yCor=(int)Beret.get(2).y;
-        
+         hasDrawn = s1.moveToCenter(width/2,height/2) &&  s2.moveToCenter(width/2,height/2);
+        }  else {
+          
+          s1.display();
+          s2.display();
+          s2.xCor=(int)Beret.get(2).x;
+          s2.yCor=(int)Beret.get(2).y;
+      }
       } 
       catch(NullPointerException e) {
       }
@@ -119,10 +125,6 @@ void keyPressed() {
     p2card=new Card(ind2);
     int picNum2 = ip.minDif(Parray.get(1));
     println("p2 "+numToCard(picNum2));
-
-    s1=new Sprite(0, 0, "../pics/sprites/temp7/frame", 5);
-    s2=new Sprite(0, 0, "../pics/sprites/temp7/frame", 5)
-      ;
     if (p1card.compareTo(p2card) > 0) {
       p1.wonHand();
       p2.lostHand();
