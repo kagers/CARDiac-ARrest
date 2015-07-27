@@ -9,7 +9,7 @@ Card p1card, p2card;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-boolean intro;
+boolean intro, hasDrawn;
 PFont fanta,fanta2, fanta3;
 PImage hertz,heartz,borda,s,m,d,k,cardTest,img;
 
@@ -17,14 +17,14 @@ void setup() {
   int width = 1000;
   int height = 1000;
   size(width, height);
-  //cam = new Capture(this);
-  //cam.start();
+  cam = new Capture(this);
+  cam.start();
   intro = true;
+  hasDrawn=false;
   p1=new Player();
   p2=new Player();
   noStroke();
-  s1=new Sprite(0, 0, "../pics/sprites/frame", 5);
-  s2=new Sprite(0, 0, "../pics/sprites/frame", 5);
+ 
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
@@ -42,31 +42,7 @@ void setup() {
 void draw() {
   if (intro) {
     //stuff happens
-    background(51,102,0);
-    textFont(fanta, 40);
-    textAlign(CENTER);
-    fill(255);
-    text("Team CARDiac ARrest\nPresents", width/2, height/6);
-    if (mousePressed) {
-      intro=false;
-    }
-    //image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
-    //image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
-    image(borda,0,0);
-    //textFont(fanta2);
-    textFont(fanta3);
-    textSize(150);
-    fill(255);
-    text("WAR",width/2, height/2-140);
-    fill(192,192,192);
-    //rect(width/2-125,height/2-50,250,60);
-    textSize(20);
-    fill(255);
-    text("PRESS RIGHT TO BEGIN",width/2,height/2-40);
-    image(s,125,height/2+40);
-    image(m,315,height/2+40);
-    image(d,505,height/2+40);
-    image(k,695,height/2+40);
+    introSequence();
   } else {
 
     if (cam.available()) {
@@ -86,10 +62,18 @@ void draw() {
         //}
         s1.xCor=(int)Beret.get(0).x;
         s1.yCor=(int)Beret.get(0).y;
+        if (!hasDrawn){
+          //s1.display();
+          //s2.display();
+          s1.moveToCenter(width/2,height/2);
+          s2.moveToCenter(width/2,height/2);
+          hasDrawn=true;
+        }
         s1.display();
+        s2.display();
         s2.xCor=(int)Beret.get(2).x;
         s2.yCor=(int)Beret.get(2).y;
-        s2.display();
+        
       } 
       catch(NullPointerException e) {
       }
@@ -133,10 +117,12 @@ void keyPressed() {
     p1card=new Card(ind1);
     int ind2=ip.minDif(Parray.get(1));
     p2card=new Card(ind2);
-
     int picNum2 = ip.minDif(Parray.get(1));
     println("p2 "+numToCard(picNum2));
 
+    s1=new Sprite(0, 0, "../pics/sprites/temp7/frame", 5);
+    s2=new Sprite(0, 0, "../pics/sprites/temp7/frame", 5)
+      ;
     if (p1card.compareTo(p2card) > 0) {
       p1.wonHand();
       p2.lostHand();
@@ -175,6 +161,33 @@ String numToCard(int picNum) {
   return face+" of "+suit;
 }
 
+void introSequence() {
+  background(51,102,0);
+  textFont(fanta, 40);
+  textAlign(CENTER);
+  fill(255);
+  text("Team CARDiac ARrest\nPresents", width/2, height/6);
+  if (mousePressed) {
+    intro=false;
+  }
+  //image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
+  //image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
+  image(borda,0,0);
+  //textFont(fanta2);
+  textFont(fanta3);
+  textSize(150);
+  fill(255);
+  text("WAR",width/2, height/2-140);
+  fill(192,192,192);
+  //rect(width/2-125,height/2-50,250,60);
+  textSize(20);
+  fill(255);
+  text("PRESS RIGHT TO BEGIN",width/2,height/2-40);
+  image(s,125,height/2+40);
+  image(m,315,height/2+40);
+  image(d,505,height/2+40);
+  image(k,695,height/2+40);
+}
 /*int war() {
  //int c=new Card(ip.minDif(Parray.get(0)));
  }*/
