@@ -17,8 +17,8 @@ void setup() {
   int width = 700;
   int height = 700;
   size(width, height);
-  cam = new Capture(this);
-  cam.start();
+  //cam = new Capture(this);
+  //cam.start();
   intro = true;
   p1=new Player();
   p2=new Player();
