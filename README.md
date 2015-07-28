@@ -6,14 +6,13 @@
 ###Things To Do:
 - Finish Sprite frames ( S: working on it )
 -   dying, royals, color -> numbers
-- Figure out sprite file organization ( S: directories )
-- Test sprite class with actual cards <b>DONE</b>
-- sprite interaction ( S: dying u mean )
-- code to handle war <b>DONE</b>
+- Get benters working, fix index issue
+- setup screen that let's you align camera
+- clean up war
 - optimize game play
 - optimize code in general
-- intro screen?
 - irl positioning(cam,cards,players, etc)?
-- winner screen?
+- winner screen
+- Use this readme for proj info & credit giving
 
 ...Anything to add/subtract?
