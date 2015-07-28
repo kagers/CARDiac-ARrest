@@ -1,26 +1,28 @@
 class Sprite {
 
-  int numFrames;
   int xCor, yCor;
+  int picNum;
+  int frame,sframe;
   ArrayList<PImage> frames;
   ArrayList<PImage> sexFrames;
-  int[] delay = new int[5];
-  int frame, sframe;
   String prefix;
-  
+  Boolean centered;
 
   Sprite( int x, int y, int n ) {
     prefix = "../pics/sprites/reggae/";
     xCor = x;
     yCor = y;
-    numFrames = 0;
+    picNum = n;
     frames = new ArrayList<PImage>();
     sexFrames=new ArrayList<PImage>();
+    centered = false;
+    /*
     delay[0] = 3;
     delay[1] = 2;
     delay[2] = 1;
     delay[3] = 1;
     delay[4] = 1;
+   
     String fixed=""+n;
     if (fixed.length()==1) 
       fixed="0"+n;
@@ -33,6 +35,9 @@ class Sprite {
     loadSequence(n);
     loadSexplosion(n);
     frame=0;
+    */
+    loadSequence();
+    loadSexplosion();
   }
 
   /*void display() {    
@@ -50,27 +55,25 @@ class Sprite {
     image(frames.get(0),xCor,yCor);
   }
 
-  boolean moveToCenter(int cx, int cy) {
-    if (xCor==cx && yCor==cy) return true;
+  void moveToCenter(int cx, int cy) {
+    int buffer =200;
+    if ((xCor <= cx+buffer && xCor >= cx -buffer) &&
+        (yCor<= cy+buffer && yCor >= cy-buffer)){
+      centered=true;
+    } 
     
     if (xCor>cx) {
-      xCor--;
-      image(frames.get(0),xCor,yCor);
+      xCor-=50;
     }
     if (xCor<cx) {
-      xCor++;
-      image(frames.get(0),xCor,yCor);
+      xCor+=50;
     }
     if (yCor>cy) {
-      yCor--;
-      image(frames.get(0),xCor,yCor);
+      yCor-=50;
     }
     if (yCor<cy) {
-      yCor++;
-      image(frames.get(0),xCor,yCor);
+      yCor+=50;
     }
-
-    return false;
   }
 
   void displayAttack() {
@@ -89,23 +92,28 @@ class Sprite {
     }
   }
       
-  void loadSequence(int picNum) {
+  void loadSequence() {
     ArrayList<PImage> newFrames=new ArrayList<PImage>();
-    numFrames=0;
-    for (int i=0; i<5;i++) {
-      //for (int j=0;j<delay[i];j++) {
-        newFrames.add(loadImage(prefix+picNum+ "/" +i +".png"));
-        numFrames++;
-      //}
+    for (int i=0; i<10;i++) {
+      if(i<5){  
+      newFrames.add(loadImage(prefix+picNum+ "/" +i +".png"));
+      } else if (i==5){
+        newFrames.add(newFrames.get(4));
+      } else {
+        newFrames.add(newFrames.get(0));
+      }
+        
     }
+    
     frames=newFrames;
-    loadSexplosion(picNum);
   }
 
-  void loadSexplosion(int n) {
-    //sexFrames.add(loadImage("../pics/sprites/sexplosion/e"+(n%4)*2+".png"));
-    sexFrames.add(loadImage("../pics/sprites/sexplosion/e0.png"));
-    sexFrames.add(loadImage("../pics/sprites/sexplosion/e"+(((n%4)*2)+1)+".png"));
+  void loadSexplosion() {
+    sexFrames.add(frames.get(0));
+    sexFrames.add(frames.get(0));
+    sexFrames.add(loadImage("../pics/sprites/sexplosion/e"+(picNum%4)*2+".png"));
+    //sexFrames.add(loadImage("../pics/sprites/sexplosion/e0.png"));
+    sexFrames.add(loadImage("../pics/sprites/sexplosion/e"+(((picNum%4)*2)+1)+".png"));
     for (int e=8;e<13;e++) {
       sexFrames.add(loadImage("../pics/sprites/sexplosion/e"+e+".png"));
     }

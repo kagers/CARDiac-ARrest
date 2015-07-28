@@ -5,29 +5,25 @@ Capture cam;
 ArrayList<PVector> Beret;
 ArrayList<PImage> Parray;
 OpenCV opencv;
-Card p1card, p2card;
+Card c1, c2;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-boolean intro, hasDrawn;
+boolean intro;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
-int preX, preY, picNum1, picNum2;
+int pre1, pre2, picNum1, picNum2;
 
 void setup() {
-  int width = 800;
-  int height = 800;
+  int width = 1000;
+  int height = 1000;
   size(width, height);
   cam = new Capture(this);
   cam.start();
   intro = true;
-  //hasCenter=false;
-  hasDrawn=false;
   p1=new Player();
   p2=new Player();
   noStroke();
-  s1=new Sprite(0, 0, 3);
-  s2=new Sprite(0, 0, 3);
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
@@ -44,8 +40,8 @@ void setup() {
   d.resize(180, 277);
   k=loadImage("../pics/intro/k.jpg"); 
   k.resize(180, 277);
-  preX=1;
-  preY=1;
+  pre1=-1;
+  pre2=-1;
 }
 
 void draw() {
@@ -62,45 +58,45 @@ void draw() {
 
       imageMode(NORMAL);
       image(cam, 0, 0);
-      try {
-        ip.outlineCards();
-        Parray = ip.unwarpCards();
+      //image(ip.threshed,0,0);
+      ip.outlineCards();
+      Parray = ip.unwarpCards();
+      int n=0;
+      try{
         Beret=ip.getBenters();
-        //for (PVector p:Beret) {
-        //fill(255,0,0);
-        // ellipse(p.x,p.y,10,10);
-        //}
-        
-        
-        if (picNum1 != preX && picNum2 != preY) {
-           int x1 = (int)Beret.get(0).x;
-           int y1 = (int)Beret.get(0).y;
-          s1.xCor= x1;
-          s1.yCor= y1;
-          picNum1 = ip.minDif(Parray.get(0));
-          picNum2 =  ip.minDif(Parray.get(1));
-          hasDrawn=false;
-          s1.loadSequence(picNum1);
-          s2.loadSequence(picNum2);
-          preX=picNum1;
-          preY = picNum2;
-          println("phase1");
-      } else if (!hasDrawn) {
-          
-          //s2.display();
-          hasDrawn = s1.moveToCenter(width/2, height/2) &&  s2.moveToCenter(width/2, height/2);
-        println("phase2");
-      } else {
 
-          s1.displayAttack();
-          s2.displayExplosion();
-          s2.xCor=(int)Beret.get(2).x;
-          s2.yCor=(int)Beret.get(2).y;
-          println("phase3");
+        picNum1 = ip.minDif(Parray.get(0));
+        picNum2 =  ip.minDif(Parray.get(1));
+
+        if (picNum1 != pre1 && picNum2 != pre2) {
+          s1 = new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,picNum1);
+          s2 = new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,picNum2);
+          pre1=picNum1;
+          pre2 = picNum2;
+          println("phase1");
+          c1=new Card(picNum1);
+          c2=new Card(picNum2);
+          n = c1.compareTo(c2);
+        } else if (!( s1.centered && s2.centered)) {
+          s1.display();
+          s2.display();
+          int w = width/2;
+          int h = cam.height/2;
+          s1.moveToCenter(w, h);
+          s2.moveToCenter(w, h);
+          println("phase 2");
+
+        } else {
+          if(n > 0){
+            s1.displayAttack();
+            s2.displayExplosion();
+          } else if (n <= 0){
+            s2.displayAttack();
+            s1.displayExplosion();
+            }
         }
-      } 
-      catch(NullPointerException e) {
       }
+      catch(NullPointerException e){}
       try {
         image(Parray.get(n), 790, 0);
       } 
@@ -128,20 +124,21 @@ void draw() {
 void keyPressed() {
   if (key==CODED) {
     if (keyCode==RIGHT) {
-      intro=false;
-      background(255);
+      n++;
     } else if (keyCode==LEFT) {
       n--;
     }
   }
+  if(key == TAB){
+    intro=false;
+    background(255);
+  }
   if (keyCode == ENTER) {
-/*
-    println("p1 "+numToCard(picNum));
-    int ind1=ip.minDif(Parray.get(0));
-    p1card=new Card(ind1);
+    /*
+    println("p1 "+numToCard(picNum1));
+    p1card=new Card(picNum1);
     int ind2=ip.minDif(Parray.get(1));
-    p2card=new Card(ind2);
-    int picNum2 = ip.minDif(Parray.get(1));
+    p2card=new Card(picNum2);
     println("p2 "+numToCard(picNum2));
     if (p1card.compareTo(p2card) > 0) {
       p1.wonHand();
@@ -155,11 +152,19 @@ void keyPressed() {
       p1.war();
       p2.war();
     }
-
+    */
+    
     fill(255);
     rect(0, cam.height, width, height-cam.height);
     println("outside");
-  */
+
+  }
+}
+
+void mouseClicked(){
+  if(intro){
+    background(255);
+    intro=false;
   }
 }
 
@@ -210,5 +215,22 @@ void introSequence() {
   image(k, 695, height/2+40);
 }
 /*int war() {
- //int c=new Card(ip.minDif(Parray.get(0)));
- }*/
+//int c=new Card(ip.minDif(Parray.get(0)));
+}*/
+
+void faceOff(Card p1card, Card p2card){
+    if (p1card.compareTo(p2card) > 0) {
+      p1.wonHand();
+      p2.lostHand();
+      println("p1 won hand");
+    } else if (p1card.compareTo(p2card) < 0) {
+      p1.lostHand();
+      p2.wonHand();
+      println("p2 won hand");
+    } else {
+      p1.war();
+      p2.war();
+    }
+    fill(255);
+    rect(0, cam.height, width, height-cam.height);
+}
