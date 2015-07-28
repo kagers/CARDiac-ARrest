@@ -50,7 +50,6 @@ public void setup() {
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
-  //fanta=loadFont("URWGothicL-Demi-48");
   hertz = loadImage("hattack.png");
   heartz = loadImage("flip.png");
   borda=loadImage("../pics/intro/border.png");
@@ -93,8 +92,9 @@ public void draw() {
 
         if (picNum1 != pre1 && picNum2 != pre2) {
           println("picnums!=pres");
+          try {
           s1 = new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,picNum1,false);
-          s2 = new Sprite((int)Beret.get(2).x,(int)Beret.get(2).y,picNum2,true);
+          s2 = new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,picNum2,true);
           pre1=picNum1;
           pre2 = picNum2;
           println("phase1");
@@ -104,7 +104,7 @@ public void draw() {
           println("player 2: "+numToCard(pre2));
           s1win=false;
           s2win=false;
-          
+          } catch (IndexOutOfBoundsException e) {}
         } else if (!( s1.centered && s2.centered)) {
           println("sprites not centered");
           s1.display();
@@ -698,16 +698,20 @@ class imgProcess {
   public ArrayList<PVector> getBenters() {
     ArrayList<PVector> result=new ArrayList<PVector>();
     PVector max=findBenter(cards.get(0));
-    result.add(max);
-    for (int i=0; i<cards.size (); i++) {
-      PVector tmp=findBenter(cards.get(i));
-      if (tmp.x<max.x) {
-        result.set(0, tmp);
-        result.set(1, max);
-      } else {
-        result.add(tmp);
-      }
+    //result.add(max);
+    /*for (int i=0; i<cards.size (); i++) {
+      PVector tmp=findBenter(cards.get(i));*/
+    PVector tmp=findBenter(cards.get(1));
+    if (tmp.x<max.x) {
+      result.add(tmp);
+      result.add(max);
+    } else {
+      result.add(tmp);
+      result.add(max);
     }
+    
+    println("benter list size: "+result.size());
+    println("benter list: "+result);
     return result;
   }
 

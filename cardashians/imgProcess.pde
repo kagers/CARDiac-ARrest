@@ -158,16 +158,20 @@ class imgProcess {
   ArrayList<PVector> getBenters() {
     ArrayList<PVector> result=new ArrayList<PVector>();
     PVector max=findBenter(cards.get(0));
-    result.add(max);
-    for (int i=0; i<cards.size (); i++) {
-      PVector tmp=findBenter(cards.get(i));
-      if (tmp.x<max.x) {
-        result.set(0, tmp);
-        result.set(1, max);
-      } else {
-        result.add(tmp);
-      }
+    //result.add(max);
+    /*for (int i=0; i<cards.size (); i++) {
+      PVector tmp=findBenter(cards.get(i));*/
+    PVector tmp=findBenter(cards.get(1));
+    if (tmp.x<max.x) {
+      result.add(tmp);
+      result.add(max);
+    } else {
+      result.add(tmp);
+      result.add(max);
     }
+    
+    println("benter list size: "+result.size());
+    println("benter list: "+result);
     return result;
   }
 

@@ -71,8 +71,9 @@ void draw() {
 
         if (picNum1 != pre1 && picNum2 != pre2) {
           println("picnums!=pres");
+          try {
           s1 = new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,picNum1,false);
-          s2 = new Sprite((int)Beret.get(2).x,(int)Beret.get(2).y,picNum2,true);
+          s2 = new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,picNum2,true);
           pre1=picNum1;
           pre2 = picNum2;
           println("phase1");
@@ -82,7 +83,7 @@ void draw() {
           println("player 2: "+numToCard(pre2));
           s1win=false;
           s2win=false;
-          
+          } catch (IndexOutOfBoundsException e) {}
         } else if (!( s1.centered && s2.centered)) {
           println("sprites not centered");
           s1.display();
