@@ -22,7 +22,6 @@ class imgProcess {
     numCs = numCards;
     thresh(th);
     cards = biggestC(opencv.findContours(), numCs);
-    cards=getSortedCards();
   }
 
   imgProcess(OpenCV op, int numCards) {
@@ -167,8 +166,8 @@ class imgProcess {
       result.add(tmp);
       result.add(max);
     } else {
-      result.add(tmp);
       result.add(max);
+      result.add(tmp);
     }
     
     println("benter list size: "+result.size());

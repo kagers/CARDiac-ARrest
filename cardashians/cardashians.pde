@@ -55,7 +55,6 @@ void draw() {
       cam.read();
 
       opencv = new OpenCV(this, cam);
-      8-pu
       ip = new imgProcess(opencv, 2);
       
       imageMode(NORMAL);
