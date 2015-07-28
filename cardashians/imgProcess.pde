@@ -91,7 +91,7 @@ class imgProcess {
       beginShape();
       strokeWeight(4);
       stroke(0, 255, 0);
-      for (PVector point : realign(c)) {
+      for (PVector point : c.getPoints()) {
         vertex(point.x, point.y);
       }
       endShape(CLOSE);
@@ -160,12 +160,12 @@ class imgProcess {
     PVector max=findBenter(cards.get(0));
     result.add(max);
     for (int i=0; i<cards.size (); i++) {
-      if (findBenter(cards.get(i)).x<max.x) {
-        PVector tmp=findBenter(cards.get(i));
+      PVector tmp=findBenter(cards.get(i));
+      if (tmp.x<max.x) {
         result.set(0, tmp);
         result.set(1, max);
       } else {
-        result.add(findBenter(cards.get(i)));
+        result.add(tmp);
       }
     }
     return result;
