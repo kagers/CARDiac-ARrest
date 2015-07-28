@@ -9,7 +9,7 @@ Card c1, c2;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-boolean intro;
+boolean intro,s1win,s2win;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
 int pre1, pre2, picNum1, picNum2;
@@ -18,6 +18,7 @@ void setup() {
   int width = 1000;
   int height = 1000;
   size(width, height);
+  frameRate(90);
   cam = new Capture(this);
   cam.start();
   intro = true;
@@ -61,7 +62,7 @@ void draw() {
       //image(ip.threshed,0,0);
       ip.outlineCards();
       Parray = ip.unwarpCards();
-      int n=0;
+
       try{
         Beret=ip.getBenters();
 
@@ -69,14 +70,16 @@ void draw() {
         picNum2 =  ip.minDif(Parray.get(1));
 
         if (picNum1 != pre1 && picNum2 != pre2) {
-          s1 = new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,picNum1);
-          s2 = new Sprite((int)Beret.get(1).x,(int)Beret.get(1).y,picNum2);
+          s1 = new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,picNum1,false);
+          s2 = new Sprite((int)Beret.get(2).x,(int)Beret.get(2).y,picNum2,true);
           pre1=picNum1;
           pre2 = picNum2;
           println("phase1");
           c1=new Card(picNum1);
           c2=new Card(picNum2);
-          n = c1.compareTo(c2);
+          s1win=false;
+          s2win=false;
+          
         } else if (!( s1.centered && s2.centered)) {
           s1.display();
           s2.display();
@@ -86,14 +89,23 @@ void draw() {
           s2.moveToCenter(w, h);
           println("phase 2");
 
-        } else {
-          if(n > 0){
-            s1.displayAttack();
+        } else if (!s1win && !s2win){
+          if(c1.compareTo(c2)>0){
+            s1win=s1.displayAttack();
             s2.displayExplosion();
-          } else if (n <= 0){
-            s2.displayAttack();
+          } else if (c1.compareTo(c2)<0){
+            s2win=s2.displayAttack();
             s1.displayExplosion();
-            }
+          }
+          if (s1win) {
+            p1.wonHand();
+            p2.lostHand();
+            //s1win=false;
+          } else if (s2win) {
+            p1.lostHand();
+            p2.wonHand();
+            //s2win=false;
+          }
         }
       }
       catch(NullPointerException e){}

@@ -6,9 +6,9 @@ class Sprite {
   ArrayList<PImage> frames;
   ArrayList<PImage> sexFrames;
   String prefix;
-  Boolean centered;
+  Boolean centered, faceleft;
 
-  Sprite( int x, int y, int n ) {
+  Sprite( int x, int y, int n , boolean fleft) {
     prefix = "../pics/sprites/reggae/";
     xCor = x;
     yCor = y;
@@ -16,6 +16,7 @@ class Sprite {
     frames = new ArrayList<PImage>();
     sexFrames=new ArrayList<PImage>();
     centered = false;
+    faceleft=fleft;
     /*
     delay[0] = 3;
     delay[1] = 2;
@@ -52,7 +53,15 @@ class Sprite {
 
   void display() {
     imageMode(CENTER);
-    image(frames.get(0),xCor,yCor);
+    PImage current=frames.get(0);
+    if (faceleft) {
+      pushMatrix();
+      scale(-1.0,1.0);
+      image(current,-xCor,yCor);
+      popMatrix();
+    } else {
+      image(current,xCor,yCor);
+    }
   }
 
   void moveToCenter(int cx, int cy) {
@@ -76,18 +85,36 @@ class Sprite {
     }
   }
 
-  void displayAttack() {
+  boolean displayAttack() {
     imageMode(CENTER);
     if (frame<frames.size()) {
-      image(frames.get(frame),xCor,yCor);
+      PImage current=frames.get(frame);
+      if (faceleft) {
+        pushMatrix();
+        scale(-1.0,1.0);
+        image(current,-xCor,yCor);
+        popMatrix();
+      } else {
+        image(current,xCor,yCor);
+      }
       frame++;
+      return false;
+    } else {
+      return true;
     }
   }
 
   void displayExplosion() {
     imageMode(CENTER);
     if (sframe<sexFrames.size()) {
-      image(sexFrames.get(sframe),xCor,yCor);
+      PImage current=sexFrames.get(sframe);
+      if (!faceleft) {
+        pushMatrix();
+        scale(-1.0,1.0);
+        image(current,-xCor,yCor);
+        popMatrix();
+      }
+      image(current,xCor,yCor);
       sframe++;
     }
   }
@@ -96,7 +123,8 @@ class Sprite {
     ArrayList<PImage> newFrames=new ArrayList<PImage>();
     for (int i=0; i<10;i++) {
       if(i<5){  
-      newFrames.add(loadImage(prefix+picNum+ "/" +i +".png"));
+        //newFrames.add(
+        newFrames.add(loadImage(prefix+picNum+ "/" +i +".png"));
       } else if (i==5){
         newFrames.add(newFrames.get(4));
       } else {
