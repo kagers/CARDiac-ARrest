@@ -9,7 +9,7 @@ Card c1, c2;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-boolean intro,s1win,s2win;
+boolean intro,s1win,s2win,war;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
 int pre1, pre2, picNum1, picNum2;
@@ -22,13 +22,13 @@ void setup() {
   cam = new Capture(this);
   cam.start();
   intro = true;
+  war=false;
   p1=new Player();
   p2=new Player();
   noStroke();
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
-  //fanta=loadFont("URWGothicL-Demi-48");
   hertz = loadImage("hattack.png");
   heartz = loadImage("flip.png");
   borda=loadImage("../pics/intro/border.png");
@@ -70,6 +70,7 @@ void draw() {
         picNum2 =  ip.minDif(Parray.get(1));
 
         if (picNum1 != pre1 && picNum2 != pre2) {
+          println("picnums!=pres");
           s1 = new Sprite((int)Beret.get(0).x,(int)Beret.get(0).y,picNum1,false);
           s2 = new Sprite((int)Beret.get(2).x,(int)Beret.get(2).y,picNum2,true);
           pre1=picNum1;
@@ -77,10 +78,13 @@ void draw() {
           println("phase1");
           c1=new Card(picNum1);
           c2=new Card(picNum2);
+          println("player 1: "+numToCard(pre1));
+          println("player 2: "+numToCard(pre2));
           s1win=false;
           s2win=false;
           
         } else if (!( s1.centered && s2.centered)) {
+          println("sprites not centered");
           s1.display();
           s2.display();
           int w = width/2;
@@ -90,12 +94,29 @@ void draw() {
           println("phase 2");
 
         } else if (!s1win && !s2win){
+          println("neither s1 nor s2 won");
           if(c1.compareTo(c2)>0){
+            println("player 1 is bigger");
             s1win=s1.displayAttack();
             s2.displayExplosion();
+            if (war) war=false;
           } else if (c1.compareTo(c2)<0){
+            println("player 2 is bigger");
             s2win=s2.displayAttack();
             s1.displayExplosion();
+            if (war) war=false;
+          } else {
+            //war
+            println("war!");
+            if (!war) {
+              p1.war();
+              p2.war();
+              war=true;
+            }
+            textSize(300);
+            textFont(fanta3);
+            fill(255,0,0);
+            text("WAR",500,100);
           }
           if (s1win) {
             p1.wonHand();
@@ -124,7 +145,7 @@ void draw() {
       noLoop();
       text("p2 Congragulations collect your prize at the front desk!", 100, 100);
     }
-    fill(0);
+    fill(255);
     textSize(36);
     //println("ay");
     text("P1 has " + p1.cardCount + " cards", width-800, height-100);

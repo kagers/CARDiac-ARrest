@@ -51,19 +51,6 @@ class Sprite {
     sframe=(sframe
     }*/
 
-  void display() {
-    imageMode(CENTER);
-    PImage current=frames.get(0);
-    if (faceleft) {
-      pushMatrix();
-      scale(-1.0,1.0);
-      image(current,-xCor,yCor);
-      popMatrix();
-    } else {
-      image(current,xCor,yCor);
-    }
-  }
-
   void moveToCenter(int cx, int cy) {
     int buffer =200;
     if ((xCor <= cx+buffer && xCor >= cx -buffer) &&
@@ -85,6 +72,19 @@ class Sprite {
     }
   }
 
+   void display() {
+    imageMode(CENTER);
+    PImage current=frames.get(0);
+    if (faceleft) {
+      pushMatrix();
+      scale(-1.0,1.0);
+      image(current,-xCor,yCor);
+      popMatrix();
+    } else {
+      image(current,xCor,yCor);
+    }
+  }
+  
   boolean displayAttack() {
     imageMode(CENTER);
     if (frame<frames.size()) {
@@ -108,13 +108,14 @@ class Sprite {
     imageMode(CENTER);
     if (sframe<sexFrames.size()) {
       PImage current=sexFrames.get(sframe);
-      if (!faceleft) {
+      if (faceleft) {
         pushMatrix();
         scale(-1.0,1.0);
         image(current,-xCor,yCor);
         popMatrix();
+      } else {
+        image(current,xCor,yCor);
       }
-      image(current,xCor,yCor);
       sframe++;
     }
   }
