@@ -12,11 +12,12 @@ int n=0;
 boolean intro, s1win, s2win, doneExplode,war;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
-PImage tb, dw, yg, sk, cts, cts1, mz;
+PImage tb, dw, yg, sk, cts, cts1, ctsf, ctsf1, mz;
 int pre1, pre2, picNum1, picNum2;
 int markX, markY, markX1, markY1, markX2, markY2;
 boolean flash;
 int timer, winner, mode;
+float angle;
 
 void setup() {
   int width = 1000;
@@ -34,8 +35,8 @@ void setup() {
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
-  hertz = loadImage("hattack.png");
-  heartz = loadImage("flip.png");
+  //hertz = loadImage("hattack.png");
+  //heartz = loadImage("flip.png");
   borda=loadImage("../pics/intro/border.png");
   borda.resize(width, height);
   s=loadImage("../pics/intro/s.jpg"); 
@@ -53,7 +54,9 @@ void setup() {
   yg=loadImage("../pics/outro/yg.jpg");
   sk=loadImage("../pics/outro/sk.jpg");
   cts=loadImage("../pics/outro/t1.png");
+  ctsf=loadImage("../pics/outro/t1f.png");
   cts1=loadImage("../pics/outro/t2.png");
+  ctsf1=loadImage("../pics/outro/t2f.png");
   mz=loadImage("../pics/outro/mz.jpg");
   markX=width/2;
   markY=height*1/8;
@@ -65,6 +68,7 @@ void setup() {
   timer=0;
   winner=0;
   mode=0;
+  angle = 0.0;
 }
 
 void draw() {
@@ -293,6 +297,7 @@ void introSequence() {
 void outroSequence() {
   background(0);
   PImage t = cts;
+  PImage tf = ctsf;
 
   //marquee
   textSize(50);
@@ -322,10 +327,12 @@ void outroSequence() {
     text("WINNER   WINNER", width/2, height/2); 
     fill(255, 0, 255);
     t = cts;
+    tf = ctsf;
     timer++;
   } else if (timer>30 && timer<=60) {
     fill(0, 255, 255);
     t = cts1;
+    tf = ctsf1;
     timer++;
   } else if (timer>60) {
     timer=0;
@@ -345,13 +352,21 @@ void outroSequence() {
 
   //pics
   imageMode(CENTER);
-  image(t, width/2, height/3.5);
-  image(mz, width*3/4, height/3.5, mz.width/3, mz.height/3);
+  image(t, width/4, height/3.5);
+  image(tf, width*3/4, height/3.5);
+  image(tf, width/4, height*2/3);
+  image(t, width*3/4, height*2/3);
+  angle = angle + 0.05;
+  float c = angle % TWO_PI;
+  translate(width/2, height*2/3);
+  rotate(c);
+  image(t, 0, 0);
+  /*image(mz, width*3/4, height/3.5, mz.width/3, mz.height/3);
   image(dw, width/4, height/3.5, dw.width/4, dw.height/4);
   image(tb, width/4-40, height*2/3, tb.width/3, tb.height/3);
   image(yg, width/2, height*2/3, yg.width/5.5, yg.height/5.5);
   image(sk, width*3/4+40, height*2/3, sk.width/2.5, sk.height/2.5);
-  flash = !flash;
+  */flash = !flash;
 }
 
 void faceOff(Card p1card, Card p2card) {
