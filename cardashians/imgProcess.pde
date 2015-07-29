@@ -165,7 +165,9 @@ class imgProcess {
     /*for (int i=0; i<cards.size (); i++) {
       PVector tmp=findBenter(cards.get(i));*/
     PVector tmp=findBenter(cards.get(1));
-    if (tmp.x<max.x) {
+    if(tmp.x- max.x < 5){
+    }
+    else if (tmp.x<max.x) {
       result.add(tmp);
       result.add(max);
     } else {

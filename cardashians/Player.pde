@@ -2,7 +2,7 @@ class Player {
   int cardCount;
   Card currentCard;
   Boolean isWar;
-  int numWar;
+  //int numWar;
   ArrayList<Card> myCards;
  
   Player() {
@@ -11,27 +11,29 @@ class Player {
     isWar = false;
   }
 
-  void wonHand(){
+  void wonHand(int numWar){
     cardCount++;
+    println("nm: "+numWar);
     if(isWar){
       cardCount+=numWar*3;
       isWar = false;
-      numWar=0;
+      //numWar=0;
     }
   }
 
-  void lostHand() {
+  void lostHand(int numWar) {
     cardCount--;
     if(isWar){
       cardCount-=numWar*3;
       isWar = false;
-      numWar=0;
+      //numWar=0;
     }
   }
 
   void war(){
+    println("***************NUMWAR: "+numWar);
     isWar=true;
-    numWar+=1;
+    //numWar+=1;
   }
 
   boolean isWinner() {

@@ -9,34 +9,32 @@ Card c1, c2;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-boolean intro, s1win, s2win, doneExplode,war;
+boolean intro, s1win, s2win, doneExplode,war,alreadyAdded;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
 PImage tb, dw, yg, sk, cts, cts1, ctsf, ctsf1, mz;
-int pre1, pre2, picNum1, picNum2;
+int pre1, pre2, picNum1, picNum2, numWar;
 int markX, markY, markX1, markY1, markX2, markY2;
 boolean flash;
 int timer, winner, mode;
 float angle;
 
 void setup() {
+  //window setup
   int width = 1000;
   int height = 1000;
   size(width, height);
   frameRate(90);
+
+  //camera setup
   cam = new Capture(this);
   cam.start();
-  //size(cam.width,cam.height);
-  //intro = true;
-  war=false;
-  p1=new Player();
-  p2=new Player();
+
+  //outro-intro screen setup
   noStroke();
   fanta = loadFont("URWChanceryL-MediItal-30.vlw");
   fanta2 = loadFont("FreeSans-48.vlw");
   fanta3 = loadFont("Courier10PitchBT-Roman-48.vlw");
-  //hertz = loadImage("hattack.png");
-  //heartz = loadImage("flip.png");
   borda=loadImage("../pics/intro/border.png");
   borda.resize(width, height);
   s=loadImage("../pics/intro/s.jpg"); 
@@ -47,8 +45,6 @@ void setup() {
   d.resize(180, 277);
   k=loadImage("../pics/intro/k.jpg"); 
   k.resize(180, 277);
-  pre1=-1;
-  pre2=-1;
   tb=loadImage("../pics/outro/tbt.jpg");
   dw=loadImage("../pics/outro/dw.jpg");
   yg=loadImage("../pics/outro/yg.jpg");
@@ -66,15 +62,23 @@ void setup() {
   markY2=height*2/3+210;
   flash=true;
   timer=0;
-  winner=0;
-  mode=0;
   angle = 0.0;
+
+  //gameplay
+  war=false;
+  mode=0;
+  winner=0;
+  pre1=-1;
+  pre2=-1;
+  p1=new Player();
+  p2=new Player();
 }
 
 void draw() {
     
   if (mode==0) {
     //stuff happens
+    //load();
     introSequence();
   } else if (mode==1) {
     background(0);
@@ -89,7 +93,7 @@ void draw() {
       opencv = new OpenCV(this, cam);
       ip = new imgProcess(opencv, 2);
 
-      imageMode(NORMAL);
+      imageMode(CORNER);
       image(cam, 0, 0);
       //image(ip.threshed,0,0);
       ip.outlineCards();
@@ -100,7 +104,6 @@ void draw() {
 
         picNum1 = ip.minDif(Parray.get(0));
         picNum2 =  ip.minDif(Parray.get(1));
-
         if (picNum1 != pre1 && picNum2 != pre2) {
           println("picnums!=pres");
           try {
@@ -116,6 +119,8 @@ void draw() {
             s1win=false;
             s2win=false;
             doneExplode=false;
+            alreadyAdded=false;
+            war=false;
           } 
           catch (IndexOutOfBoundsException e) {
           }
@@ -129,34 +134,47 @@ void draw() {
           s2.moveToCenter(w, h);
           println("phase 2");
           //} else if (!(s1win && s2win) && !doneExplode) {
-        } else if (!s1win && !s2win) {
+        } else if (!s1win && !s2win&&!war) {
           println("neither s1 nor s2 won");
           if (c1.compareTo(c2)>0) {
             println("player 1 is bigger");
             //s1win=s1.displayAttack();
+            if (!alreadyAdded) {
+              p1.wonHand(numWar);
+              p2.lostHand(numWar);
+              alreadyAdded=true;
+              numWar=0;
+            }
             doneExplode=s2.displayExplosion();
             s1win=s1.displayAttack();
             if (war) war=false;
           } else if (c1.compareTo(c2)<0) {
             println("player 2 is bigger");
             //s2win=s2.displayAttack();
+            if (!alreadyAdded) {
+              p1.lostHand(numWar);
+              p2.wonHand(numWar);
+              alreadyAdded=true;
+              numWar=0;
+            }
             doneExplode=s1.displayExplosion();
             s2win=s2.displayAttack();
-            if (war) war=false;
-          } else {
+            //if (war) war=false;
+          }
+          else {
             //war
             println("war!");
-            if (!war) {
-              p1.war();
-              p2.war();
-              war=true;
-            }
+            //if (!war) {
+            p1.war();
+            p2.war();
+            war=true;
+            numWar++;
             textSize(300);
             textFont(fanta3);
             fill(255, 0, 0);
             text("WAR", 500, 100);
           }
-        if (s1win) {
+          /*if (s1win) {
           println("s1win");
           p1.wonHand();
           p2.lostHand();
@@ -166,9 +184,9 @@ void draw() {
           p1.lostHand();
           p2.wonHand();
           //s2win=false;
-        }
-        }
+          }*/
       }
+       }
       catch(NullPointerException e) {
       }
       /*try {
@@ -195,6 +213,7 @@ void draw() {
     text("P2 has " + p2.cardCount + " cards", width-200, height-250);
     //s = new Sprite(100,100,"../pics/frames/frame",5);
   } else if (mode==3) {
+    frame.setSize(1000,1000);
     outroSequence();
   }
 }
@@ -212,30 +231,8 @@ void keyPressed() {
     mode=1;
     background(255);
   }
-  if (keyCode == ENTER) {
-    /*
-    println("p1 "+numToCard(picNum1));
-     p1card=new Card(picNum1);
-     int ind2=ip.minDif(Parray.get(1));
-     p2card=new Card(picNum2);
-     println("p2 "+numToCard(picNum2));
-     if (p1card.compareTo(p2card) > 0) {
-     p1.wonHand();
-     p2.lostHand();
-     println("p1 won hand");
-     } else if (p1card.compareTo(p2card) < 0) {
-     p1.lostHand();
-     p2.wonHand();
-     println("p2 won hand");
-     } else {
-     p1.war();
-     p2.war();
-     }
-     */
-
-    fill(255);
-    rect(0, cam.height, width, height-cam.height);
-    println("outside");
+  if (keyCode == BACKSPACE) {
+    mode=0;
   }
 }
 
@@ -267,6 +264,7 @@ String numToCard(int picNum) {
 }
 
 void introSequence() {
+  frame.setSize(1000,1000);
   background(51, 102, 0);
   textFont(fanta, 40);
   textAlign(CENTER);
@@ -369,20 +367,5 @@ void outroSequence() {
   */flash = !flash;
 }
 
-void faceOff(Card p1card, Card p2card) {
-  if (p1card.compareTo(p2card) > 0) {
-    p1.wonHand();
-    p2.lostHand();
-    println("p1 won hand");
-  } else if (p1card.compareTo(p2card) < 0) {
-    p1.lostHand();
-    p2.wonHand();
-    println("p2 won hand");
-  } else {
-    p1.war();
-    p2.war();
-  }
-  fill(255);
-  rect(0, cam.height, width, height-cam.height);
-}
+
 
