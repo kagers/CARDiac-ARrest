@@ -22,6 +22,9 @@ class imgProcess {
     numCs = numCards;
     thresh(th);
     cards = biggestC(opencv.findContours(), numCs);
+    try {
+      cards=getSortedCards();
+    } catch (NullPointerException e) {}
   }
 
   imgProcess(OpenCV op, int numCards) {

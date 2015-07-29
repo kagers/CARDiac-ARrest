@@ -75,21 +75,27 @@ class Sprite {
     }
   }
 
-  void displayExplosion() {
+  boolean displayExplosion() {
     imageMode(CENTER);
     if(sframe< 0){
       display();
       sframe++;
- 
     }else if (sframe<sexFrames.size()) {
       PImage current=sexFrames.get(sframe);
-
       if(sframe < 2){
         display();
-     }
-      image(current,xCor+40,yCor);
-      sframe++;
+      }
+      if (faceleft) {
+        image(current,xCor+40,yCor);
+        sframe++;
+      } else {
+        image(current,xCor,yCor);
+        sframe++;
+      }
+    } else if (sframe==sexFrames.size()) {
+      return true;
     }
+    return false;
   }
       
   void loadSequence() {

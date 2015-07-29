@@ -9,7 +9,7 @@ Card c1, c2;
 Player p1, p2;
 Sprite s1, s2;
 int n=0;
-boolean intro, s1win, s2win, war;
+boolean intro, s1win, s2win, doneExplode,war;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
 PImage tb, dw, yg, sk, cts, cts1, mz;
@@ -19,12 +19,13 @@ boolean flash;
 int timer, winner, mode;
 
 void setup() {
-  int width = 800;
-  int height = 800;
+  int width = 1000;
+  int height = 1000;
   size(width, height);
   frameRate(90);
   cam = new Capture(this);
   cam.start();
+  //size(cam.width,cam.height);
   //intro = true;
   war=false;
   p1=new Player();
@@ -67,14 +68,20 @@ void setup() {
 }
 
 void draw() {
+    
   if (mode==0) {
     //stuff happens
-    outroSequence();
+    introSequence();
   } else if (mode==1) {
-
+    background(0);
     if (cam.available()) {
       cam.read();
-
+      frame.setSize(1000,cam.height);
+      mode=2;
+    }
+  }else if (mode==2){
+       if (cam.available()) {
+      cam.read();
       opencv = new OpenCV(this, cam);
       ip = new imgProcess(opencv, 2);
 
@@ -104,6 +111,7 @@ void draw() {
             println("player 2: "+numToCard(pre2));
             s1win=false;
             s2win=false;
+            doneExplode=false;
           } 
           catch (IndexOutOfBoundsException e) {
           }
@@ -116,17 +124,20 @@ void draw() {
           s1.moveToCenter(w, h);
           s2.moveToCenter(w, h);
           println("phase 2");
+          //} else if (!(s1win && s2win) && !doneExplode) {
         } else if (!s1win && !s2win) {
           println("neither s1 nor s2 won");
           if (c1.compareTo(c2)>0) {
             println("player 1 is bigger");
+            //s1win=s1.displayAttack();
+            doneExplode=s2.displayExplosion();
             s1win=s1.displayAttack();
-            s2.displayExplosion();
             if (war) war=false;
           } else if (c1.compareTo(c2)<0) {
             println("player 2 is bigger");
+            //s2win=s2.displayAttack();
+            doneExplode=s1.displayExplosion();
             s2win=s2.displayAttack();
-            s1.displayExplosion();
             if (war) war=false;
           } else {
             //war
@@ -141,43 +152,45 @@ void draw() {
             fill(255, 0, 0);
             text("WAR", 500, 100);
           }
-          if (s1win) {
-            p1.wonHand();
-            p2.lostHand();
-            //s1win=false;
-          } else if (s2win) {
-            p1.lostHand();
-            p2.wonHand();
-            //s2win=false;
-          }
+        if (s1win) {
+          println("s1win");
+          p1.wonHand();
+          p2.lostHand();
+          //s1win=false;
+        } else if (s2win) {
+          println("s2win");
+          p1.lostHand();
+          p2.wonHand();
+          //s2win=false;
+        }
         }
       }
       catch(NullPointerException e) {
       }
-      try {
+      /*try {
         image(Parray.get(n), 790, 0);
       } 
       catch(Exception e) {
-      }
+      }*/
     }
     if (p1.isWinner()) {
       //noLoop();
       winner=1;
-      mode=2;
+      mode=3;
       //text("p1 winnerp1  winner chp1icken dinner", 100, 100);
     } else if (p2.isWinner()) {
       //noLoop();
       winner=2;
-      mode=2;
+      mode=3;
       //text("p2 Congragulations collect your prize at the front desk!", 100, 100);
     }
     fill(255);
     textSize(36);
     //println("ay");
-    text("P1 has " + p1.cardCount + " cards", width-800, height-100);
-    text("P2 has " + p2.cardCount + " cards", width-200, height-100);
+    text("P1 has " + p1.cardCount + " cards", width-800, height-250);
+    text("P2 has " + p2.cardCount + " cards", width-200, height-250);
     //s = new Sprite(100,100,"../pics/frames/frame",5);
-  } else if (mode==2) {
+  } else if (mode==3) {
     outroSequence();
   }
 }
@@ -270,7 +283,7 @@ void introSequence() {
   //rect(width/2-125,height/2-50,250,60);
   textSize(20);
   fill(255);
-  text("PRESS RIGHT TO BEGIN", width/2, height/2-40);
+  text("CLICK ANYWHERE TO BEGIN", width/2, height/2-40);
   image(s, 125, height/2+40);
   image(m, 315, height/2+40);
   image(d, 505, height/2+40);
@@ -320,10 +333,10 @@ void outroSequence() {
 
   //border
   noStroke();
-  rect(0, 0, 10, height);
-  rect(width-10, 0, 10, height);
-  rect(0, height-10, width, 10);
-  rect(0, 0, width, 10);
+  rect(0, 0, 20, height);
+  rect(width-20, 0, 20, height);
+  rect(0, height-20, width, 20);
+  rect(0, 0, width, 20);
 
   //regular text
   fill(255, 0, 0);
