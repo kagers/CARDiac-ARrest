@@ -11,6 +11,7 @@ class Player {
     isWar = false;
   }
 
+  
   void wonHand(int numWar){
     cardCount++;
     println("nm: "+numWar);
@@ -37,7 +38,7 @@ class Player {
   }
 
   boolean isWinner() {
-    return cardCount==36;
+    return cardCount>=36;
   }
 
 }
