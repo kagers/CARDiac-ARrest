@@ -30,8 +30,8 @@ void setup() {
   frameRate(90);
 
   //camera setup
-  //cam = new Capture(this);
-  //cam.start();
+  cam = new Capture(this);
+  cam.start();
 
   //outro-intro screen setup
   noStroke();
@@ -89,7 +89,7 @@ void draw() {
   if (mode==0) {
     //stuff happens
     //load();
-    outroSequence();
+    introSequence();
   } else if (mode==1) {
     background(0);
     if (cam.available()) {
