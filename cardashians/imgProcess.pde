@@ -1,4 +1,3 @@
-
 import gab.opencv.*;
 import org.opencv.core.*;
 import org.opencv.imgproc.*;

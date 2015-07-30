@@ -2,22 +2,25 @@ import processing.video.*;
 
 imgProcess ip;
 Capture cam;
+OpenCV opencv;
 ArrayList<PVector> Beret;
 ArrayList<PImage> Parray;
-OpenCV opencv;
 Card c1, c2;
 Player p1, p2;
 Sprite s1, s2;
-int n=0;
-boolean intro, s1win, s2win, doneExplode,war,alreadyAdded;
-PFont fanta, fanta2, fanta3;
-PImage hertz, heartz, borda, s, m, d, k, cardTest, img;
-PImage tb, dw, yg, sk, cts, cts1, ctsf, ctsf1, mz;
+boolean s1win, s2win, doneExplode, war, alreadyAdded;
 int pre1, pre2, picNum1, picNum2, numWar;
+//int n=0;
+
+//intro and outro
+//PImage tb, dw, yg, sk, mz;
+PFont fanta, fanta2, fanta3;
+PImage hertz, heartz, borda, s, m, d, k, hs, cardTest, img;
+PImage cts, cts1, ctsf, ctsf1;
 int markX, markY, markX1, markY1, markX2, markY2;
-boolean flash;
 int timer, winner, mode;
-float angle;
+float xP, yP, dx, dy, angle;
+boolean flash;
 
 void setup() {
   //window setup
@@ -27,8 +30,8 @@ void setup() {
   frameRate(90);
 
   //camera setup
-  cam = new Capture(this);
-  cam.start();
+  //cam = new Capture(this);
+  //cam.start();
 
   //outro-intro screen setup
   noStroke();
@@ -45,15 +48,16 @@ void setup() {
   d.resize(180, 277);
   k=loadImage("../pics/intro/k.jpg"); 
   k.resize(180, 277);
-  tb=loadImage("../pics/outro/tbt.jpg");
+  /*tb=loadImage("../pics/outro/tbt.jpg");
   dw=loadImage("../pics/outro/dw.jpg");
   yg=loadImage("../pics/outro/yg.jpg");
   sk=loadImage("../pics/outro/sk.jpg");
-  cts=loadImage("../pics/outro/t1.png");
+  mz=loadImage("../pics/outro/mz.jpg");
+  */cts=loadImage("../pics/outro/t1.png");
   ctsf=loadImage("../pics/outro/t1f.png");
   cts1=loadImage("../pics/outro/t2.png");
   ctsf1=loadImage("../pics/outro/t2f.png");
-  mz=loadImage("../pics/outro/mz.jpg");
+  hs=loadImage("../pics/outro/slice.png");
   markX=width/2;
   markY=height*1/8;
   markX1=width/2;
@@ -63,6 +67,10 @@ void setup() {
   flash=true;
   timer=0;
   angle = 0.0;
+  xP = width/2;
+  yP = height/3.5;
+  dx = 3;
+  dy = 3;
 
   //gameplay
   war=false;
@@ -75,20 +83,20 @@ void setup() {
 }
 
 void draw() {
-    
+
   if (mode==0) {
     //stuff happens
     //load();
-    introSequence();
+    outroSequence();
   } else if (mode==1) {
     background(0);
     if (cam.available()) {
       cam.read();
-      frame.setSize(1000,cam.height);
+      frame.setSize(1000, cam.height);
       mode=2;
     }
-  }else if (mode==2){
-       if (cam.available()) {
+  } else if (mode==2) {
+    if (cam.available()) {
       cam.read();
       opencv = new OpenCV(this, cam);
       ip = new imgProcess(opencv, 2);
@@ -160,8 +168,7 @@ void draw() {
             doneExplode=s1.displayExplosion();
             s2win=s2.displayAttack();
             //if (war) war=false;
-          }
-          else {
+          } else {
             //war
             println("war!");
             //if (!war) {
@@ -175,33 +182,31 @@ void draw() {
             text("WAR", 500, 100);
           }
           /*if (s1win) {
-          println("s1win");
-          p1.wonHand();
-          p2.lostHand();
-          //s1win=false;
-        } else if (s2win) {
-          println("s2win");
-          p1.lostHand();
-          p2.wonHand();
-          //s2win=false;
-          }*/
+           println("s1win");
+           p1.wonHand();
+           p2.lostHand();
+           //s1win=false;
+           } else if (s2win) {
+           println("s2win");
+           p1.lostHand();
+           p2.wonHand();
+           //s2win=false;
+           }*/
+        }
       }
-       }
       catch(NullPointerException e) {
       }
       /*try {
-        image(Parray.get(n), 790, 0);
-      } 
-      catch(Exception e) {
-      }*/
+       image(Parray.get(n), 790, 0);
+       } 
+       catch(Exception e) {
+       }*/
     }
     if (p1.isWinner()) {
-      //noLoop();
       winner=1;
       mode=3;
       //text("p1 winnerp1  winner chp1icken dinner", 100, 100);
     } else if (p2.isWinner()) {
-      //noLoop();
       winner=2;
       mode=3;
       //text("p2 Congragulations collect your prize at the front desk!", 100, 100);
@@ -213,18 +218,18 @@ void draw() {
     text("P2 has " + p2.cardCount + " cards", width-200, height-250);
     //s = new Sprite(100,100,"../pics/frames/frame",5);
   } else if (mode==3) {
-    frame.setSize(1000,1000);
+    frame.setSize(1000, 1000);
     outroSequence();
   }
 }
 
 void keyPressed() {
   if (key==CODED) {
-    if (keyCode==RIGHT) {
-      n++;
-    } else if (keyCode==LEFT) {
-      n--;
-    }
+    /*if (keyCode==RIGHT) {
+     n++;
+     } else if (keyCode==LEFT) {
+     n--;
+     }*/
   }
   if (key == TAB && mode==0) {
     //intro=false;
@@ -264,14 +269,14 @@ String numToCard(int picNum) {
 }
 
 void introSequence() {
-  frame.setSize(1000,1000);
+  frame.setSize(1000, 1000);
   background(51, 102, 0);
   textFont(fanta, 40);
   textAlign(CENTER);
   fill(255);
   text("Team CARDiac ARrest\nPresents", width/2, height/6);
   if (mousePressed) {
-    intro=false;
+    mode = 1;
   }
   //image(heartz,width/5,height/6+10,heartz.width/8,heartz.height/8);
   //image(hertz,((width*4)/5)-(heartz.width/8),height/6+10,heartz.width/8,heartz.height/8);
@@ -348,24 +353,46 @@ void outroSequence() {
   textSize(25);
   text("!! PLAYER "+winner+" WON THE GAME !!", width/2, height/2+50);
 
-  //pics
+  //thluffy
   imageMode(CENTER);
   image(t, width/4, height/3.5);
   image(tf, width*3/4, height/3.5);
   image(tf, width/4, height*2/3);
   image(t, width*3/4, height*2/3);
+  
+  //cat
+  if (xP>=width-90 || xP<=90){
+    dx = -dx;
+  }
+  if (yP>=height-90 || yP<=90){
+    dy = -dy;
+  }
+  image(hs,xP,yP,hs.width/3,hs.height/3);
+  xP+=dx;
+  yP+=dy;
+  
+  //rotation
   angle = angle + 0.05;
   float c = angle % TWO_PI;
-  translate(width/2, height*2/3);
+  translate(width/2, height/3.5);
   rotate(c);
-  image(t, 0, 0);
+  //image(t, 0, 0);
+  translate(-width/2, -height/3.5);
+  rotate(0);
+  fill(255,255,0);
+  textSize(70);
+  text("WINNER", markX1, markY1);
+  textSize(50);
+  text("WINNER", markX, markY);
+  
   /*image(mz, width*3/4, height/3.5, mz.width/3, mz.height/3);
-  image(dw, width/4, height/3.5, dw.width/4, dw.height/4);
-  image(tb, width/4-40, height*2/3, tb.width/3, tb.height/3);
-  image(yg, width/2, height*2/3, yg.width/5.5, yg.height/5.5);
-  image(sk, width*3/4+40, height*2/3, sk.width/2.5, sk.height/2.5);
-  */flash = !flash;
-}
+   image(dw, width/4, height/3.5, dw.width/4, dw.height/4);
+   image(tb, width/4-40, height*2/3, tb.width/3, tb.height/3);
+   image(yg, width/2, height*2/3, yg.width/5.5, yg.height/5.5);
+   image(sk, width*3/4+40, height*2/3, sk.width/2.5, sk.height/2.5);
+   */
 
+  flash = !flash;
+}
 
 
