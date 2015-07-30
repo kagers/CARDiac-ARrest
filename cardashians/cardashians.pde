@@ -16,10 +16,10 @@ int pre1, pre2, picNum1, picNum2, numWar;
 //PImage tb, dw, yg, sk, mz;
 PFont fanta, fanta2, fanta3;
 PImage hertz, heartz, borda, s, m, d, k, hs, cardTest, img;
-PImage cts, cts1, ctsf, ctsf1;
+PImage cts, cts1, ctsf, ctsf1, ship, ship1;
 int markX, markY, markX1, markY1, markX2, markY2;
 int timer, winner, mode;
-float xP, yP, dx, dy, angle;
+float xP, yP, dx, dy, xS, yS, angle;
 boolean flash;
 
 void setup() {
@@ -58,6 +58,8 @@ void setup() {
   cts1=loadImage("../pics/outro/t2.png");
   ctsf1=loadImage("../pics/outro/t2f.png");
   hs=loadImage("../pics/outro/slice.png");
+  ship=loadImage("../pics/outro/ship.png");
+  ship1=loadImage("../pics/outro/shipi.png");
   markX=width/2;
   markY=height*1/8;
   markX1=width/2;
@@ -322,6 +324,20 @@ void outroSequence() {
     markX2=width+5;
   }
 
+  //regular text
+  fill(255, 0, 0);
+  textSize(25);
+  text("!! PLAYER "+winner+" WON THE GAME !!", width/2, height/2+50);
+  
+  //ship
+  if (yS>height){
+    yS=-ship.height/2; 
+  }
+  imageMode(CORNER);
+  image(ship,xS+20,yS,ship.width/2,ship.height/2);
+  image(ship1,width-xS-20-ship1.width/2,yS,ship1.width/2,ship1.height/2);
+  yS+=3;
+  
   //blink
   if (timer<=30) {
     fill(255, 0, 0);
@@ -340,19 +356,14 @@ void outroSequence() {
   } else if (timer>60) {
     timer=0;
   }
-
+  
   //border
   noStroke();
   rect(0, 0, 20, height);
   rect(width-20, 0, 20, height);
   rect(0, height-20, width, 20);
   rect(0, 0, width, 20);
-
-  //regular text
-  fill(255, 0, 0);
-  textSize(25);
-  text("!! PLAYER "+winner+" WON THE GAME !!", width/2, height/2+50);
-
+  
   //thluffy
   imageMode(CENTER);
   image(t, width/4, height/3.5);
