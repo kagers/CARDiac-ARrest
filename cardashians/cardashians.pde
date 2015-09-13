@@ -27,7 +27,7 @@ void setup() {
   int width = 1000;
   int height = 1000;
   size(width, height);
-  frameRate(90);
+  frameRate(120);
 
   //camera setup
   cam = new Capture(this);
@@ -84,6 +84,15 @@ void setup() {
   p2=new Player();
 }
 
+void resetGame() {
+  war=false;
+  winner=0;
+  pre1=-1;
+  pre2=-1;
+  p1=new Player();
+  p2=new Player();
+}
+
 void draw() {
 
   if (mode==0) {
@@ -101,10 +110,11 @@ void draw() {
     if (cam.available()) {
       cam.read();
       opencv = new OpenCV(this, cam);
-      ip = new imgProcess(opencv, 2);
+      ip = new imgProcess(opencv, 3);
 
       imageMode(CORNER);
       image(cam, 0, 0);
+      //frame.setSize(1500,1500);
       //image(ip.threshed,0,0);
       ip.outlineCards();
       Parray = ip.unwarpCards();
@@ -240,6 +250,7 @@ void keyPressed() {
   }
   if (keyCode == BACKSPACE) {
     mode=0;
+    resetGame();
   }
 }
 
